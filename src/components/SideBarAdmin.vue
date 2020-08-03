@@ -1,19 +1,11 @@
 <template>
-  <v-container>
-
       <v-navigation-drawer
-          expand-on-hover
-          v-model="drawer"
-          :color="color"
-          :mini-variant="miniVariant"
-          :right="right"
-          :permanent="true"
-          :src="bg"
-          absolute
-          dark
+
+          app
+          permanent
       >
         <v-list
-            dense
+
             nav
             class="py-0"
         >
@@ -31,22 +23,43 @@
           <v-divider></v-divider>
 
           <v-list-item
-              v-for="item in items"
-              :key="item.title"
-              link
+
           >
             <v-list-item-icon>
-              <v-icon>{{ item.icon }}</v-icon>
+              <v-icon>mdi-view-dashboard</v-icon>
             </v-list-item-icon>
 
             <v-list-item-content>
-              <v-list-item-title>{{ item.title }}</v-list-item-title>
+              <v-list-item-title><router-link to="/profesorList"> Profesori </router-link></v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+
+          <v-list-item
+
+          >
+            <v-list-item-icon>
+              <v-icon>mdi-view-dashboard</v-icon>
+            </v-list-item-icon>
+
+            <v-list-item-content>
+              <v-list-item-title><router-link to="/predmetList"> Predmeti </router-link></v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+
+          <v-list-item
+
+          >
+            <v-list-item-icon>
+              <v-icon>mdi-view-dashboard</v-icon>
+            </v-list-item-icon>
+
+            <v-list-item-content>
+              <v-list-item-title><router-link to="/smerList"> Smerovi </router-link></v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-list>
       </v-navigation-drawer>
-  </v-container>
-</template>
+  </template>
 
 <script>
 export default {

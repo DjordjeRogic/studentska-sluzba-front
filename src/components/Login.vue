@@ -121,6 +121,10 @@ export default {
             this.$refs.observer.reset();
           })
     }
+  },
+  created() {
+    this.$store.dispatch('destroyToken');
+    this.$store.dispatch('destroyCurrentUser');
   }
 }
 </script>
