@@ -47,21 +47,6 @@
                       ></v-select>
                     </v-col>
                   </v-row>
-                  <v-row>
-                    <v-col>
-                      <v-text-field type="number" filled v-model="editedItem.brojSemestara" label="Broj Semestara"></v-text-field>
-                    </v-col>
-                  </v-row>
-                  <v-row>
-                    <v-col>
-                      <v-text-field type="number" filled v-model="editedItem.brojPredavanjaUGodini" label="Broj predavanja"></v-text-field>
-                    </v-col>
-                  </v-row>
-                  <v-row>
-                    <v-col>
-                      <v-text-field type="number" filled v-model="editedItem.brojESBPBodova" label="Broj predavanja"></v-text-field>
-                    </v-col>
-                  </v-row>
                 </v-container>
               </v-card-text>
 
@@ -125,8 +110,6 @@ export default {
     headers: [
       { text: 'Naziv', value: 'naziv' },
       { text: 'Kategorija', value: 'kategorija' },
-      { text: 'Broj predavanja', value: 'brojPredavanjaUGodini' },
-      { text: 'ESBP Bodovi', value: 'brojESBPBodova' },
       { text: 'Actions', value: 'actions', sortable: false },
     ],
     predmeti: [],
@@ -134,14 +117,10 @@ export default {
     editedItem: {
       naziv: '',
       kategorija: '',
-      brojPredavanjaUGodini: '',
-      brojESBPBodova:''
     },
     defaultItem: {
       naziv: '',
       kategorija: '',
-      brojPredavanjaUGodini: '',
-      brojESBPBodova:''
     },
     snackbar:false,
     message:'',
@@ -193,8 +172,6 @@ export default {
         axios.post(baseUrl+"/predmet",{
           'naziv':this.editedItem.naziv,
           'kategorija':this.editedItem.kategorija.value,
-          'brojPredavanjaUGodini':this.editedItem.brojPredavanjaUGodini,
-          'brojESBPBodova':this.editedItem.brojESBPBodova,
         }
         ).then(response => {
           this.message="Uspesno dodat predmet:  "+response.data.naziv;
