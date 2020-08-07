@@ -155,6 +155,9 @@
         <template v-slot:item.profesor="{ item }">
           {{item.profesor.name}} {{item.profesor.surname}}
         </template>
+        <template v-slot:item.detalji="{ item }">
+          <v-btn @click="detalji(item)">Detalji</v-btn>
+        </template>
         <template v-slot:item.actions="{ item }">
           <v-icon
               small
@@ -215,6 +218,7 @@ export default {
         { text: 'ESBP Bodovi', value: 'brojESBPBodova', groupable:false  },
         { text: 'Semestar', value: 'semestar' },
         { text: 'Profesor', value: 'profesor', groupable:false  },
+        { text: 'Detalji', value: 'detalji', sortable: false },
         { text: 'Actions', value: 'actions', sortable: false , groupable:false },
       ],
       editedItem: {
@@ -306,6 +310,9 @@ export default {
       this.edit = false
 
       },
+    detalji(item){
+      this.$router.push({ path: `/sudijskiProgram/${item.id}` })
+    }
 
   },
   created() {

@@ -57,6 +57,18 @@
               <v-list-item-title><router-link to="/smerList"> Smerovi </router-link></v-list-item-title>
             </v-list-item-content>
           </v-list-item>
+
+          <v-list-item
+
+          >
+            <v-list-item-icon>
+              <v-icon>mdi-view-dashboard</v-icon>
+            </v-list-item-icon>
+
+            <v-list-item-content>
+              <v-list-item-title><router-link to="/studentList"> Studenti </router-link></v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
         </v-list>
       </v-navigation-drawer>
   </template>

@@ -156,6 +156,18 @@ export default {
     deleteItem (item) {
       const index = this.profesori.indexOf(item)
       confirm('Are you sure you want to delete this item?') && this.profesori.splice(index, 1)
+
+      axios.delete("http://localhost:8080/profesor/"+item.id)
+          .then(response => {
+        this.message="Uspesno obrsan profesor:  "+response.data.name+ " "+response.data.username;
+        this.color="success"
+        this.snackbar=true
+      }).catch(error=>{
+        this.color="error"
+        this.message = error.response.data;
+        this.snackbar=true
+      });
+
     },
 
     close () {
