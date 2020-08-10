@@ -247,6 +247,7 @@ export default {
         {naziv: 'Aprilski', value:'APR'},
         {naziv: 'Junski', value:'JUN'},
         {naziv: 'Julski', value:'JUL'},
+        {naziv: 'Avgustovski', value:'AVG'},
         {naziv: 'Septembarski', value:'SEP'},
         {naziv: 'Oktobarski', value:'OKT'},
         {naziv: 'Dodatni', value:'DO'},

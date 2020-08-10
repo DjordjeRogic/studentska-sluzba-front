@@ -8,6 +8,8 @@ import SmerList from '../components/SmerList.vue'
 import SmerDetails from '../components/SmerDetails.vue'
 import StudijskiProgramDetails from '../components/StudijskiProgramDetails.vue'
 import StudentList from '../components/StudentList.vue'
+import StudentIspitList from '../components/StudentIspitList.vue'
+import PrijavljeniIspitList from '../components/PrijavljeniIspitList.vue'
 
 Vue.use(Router)
 
@@ -53,6 +55,16 @@ export default new Router({
             path: '/studentList',
             name: 'StudentList',
             component: StudentList
+        },
+        {
+            path: '/studentIspitList',
+            name: 'StudentIspitList',
+            component: StudentIspitList
+        },
+        {
+            path: '/prijavljeniIspitList',
+            name: 'PrijavljeniIspitList',
+            component: PrijavljeniIspitList
         },
     ]
 })

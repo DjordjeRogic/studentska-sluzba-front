@@ -69,6 +69,29 @@
               <v-list-item-title><router-link to="/studentList"> Studenti </router-link></v-list-item-title>
             </v-list-item-content>
           </v-list-item>
+
+          <v-list-item v-if="role='ROLE_STUDENT'"
+
+          >
+            <v-list-item-icon>
+              <v-icon>mdi-view-dashboard</v-icon>
+            </v-list-item-icon>
+
+            <v-list-item-content>
+              <v-list-item-title><router-link to="/studentIspitList"> Ispiti </router-link></v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item v-if="role='ROLE_STUDENT'"
+
+          >
+            <v-list-item-icon>
+              <v-icon>mdi-view-dashboard</v-icon>
+            </v-list-item-icon>
+
+            <v-list-item-content>
+              <v-list-item-title><router-link to="/prijavljeniIspitList">Prijavljeni Ispiti </router-link></v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
         </v-list>
       </v-navigation-drawer>
   </template>
@@ -96,6 +119,7 @@ export default {
       miniVariant: false,
       expandOnHover: false,
       background: false,
+      role:this.$store.getters.userRole
     }
   },
   computed: {
