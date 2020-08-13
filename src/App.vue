@@ -23,9 +23,9 @@
       </v-app-bar>
         </nav>
         <SideBar v-if="isAuthenticated"/>
-      <v-content>
+      <v-main>
         <router-view></router-view>
-      </v-content>
+      </v-main>
     </v-app>
 
 </template>

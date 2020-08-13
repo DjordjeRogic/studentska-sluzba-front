@@ -5,8 +5,7 @@
           permanent
       >
         <v-list
-
-            nav
+            link
             class="py-0"
         >
           <v-list-item two-line :class="miniVariant && 'px-0'">
@@ -22,7 +21,7 @@
 
           <v-divider></v-divider>
 
-          <v-list-item
+          <v-list-item v-if="checkRole()=='ROLE_ADMIN'"
 
           >
             <v-list-item-icon>
@@ -34,7 +33,7 @@
             </v-list-item-content>
           </v-list-item>
 
-          <v-list-item
+          <v-list-item v-if="checkRole()=='ROLE_ADMIN'"
 
           >
             <v-list-item-icon>
@@ -46,7 +45,7 @@
             </v-list-item-content>
           </v-list-item>
 
-          <v-list-item
+          <v-list-item v-if="checkRole()=='ROLE_ADMIN'"
 
           >
             <v-list-item-icon>
@@ -58,7 +57,7 @@
             </v-list-item-content>
           </v-list-item>
 
-          <v-list-item
+          <v-list-item v-if="checkRole()=='ROLE_ADMIN'"
 
           >
             <v-list-item-icon>
@@ -70,7 +69,7 @@
             </v-list-item-content>
           </v-list-item>
 
-          <v-list-item v-if="role='ROLE_STUDENT'"
+          <v-list-item v-if="checkRole()=='ROLE_STUDENT'"
 
           >
             <v-list-item-icon>
@@ -81,18 +80,53 @@
               <v-list-item-title><router-link to="/studentIspitList"> Ispiti </router-link></v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item v-if="role='ROLE_STUDENT'"
-
+          <v-list-item v-if="checkRole()=='ROLE_STUDENT'"
+                       ripple
+                       to="/prijavljeniIspitList"
           >
             <v-list-item-icon>
               <v-icon>mdi-view-dashboard</v-icon>
             </v-list-item-icon>
 
             <v-list-item-content>
-              <v-list-item-title><router-link to="/prijavljeniIspitList">Prijavljeni Ispiti </router-link></v-list-item-title>
+              <v-list-item-title>Prijavljeni Ispiti </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
+
+          <v-list-item v-if="checkRole()=='ROLE_PROFESOR'"
+                       ripple
+                       to="/profesorIspitList"
+          >
+            <v-list-item-icon>
+              <v-icon>mdi-view-dashboard</v-icon>
+            </v-list-item-icon>
+
+            <v-list-item-content>
+              <v-list-item-title>Ispiti</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-divider></v-divider>
+
+
+          <v-list-item v-if="checkRole()=='ROLE_PROFESOR'"
+                       ripple
+                       to="/unosOcenaIspitList"
+          >
+            <v-list-item-icon>
+              <v-icon>mdi-view-dashboard</v-icon>
+            </v-list-item-icon>
+
+            <v-list-item-content>
+              <v-list-item-title>Unos rezultata</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-divider></v-divider>
         </v-list>
+        <template v-slot:append>
+          <div class="pa-2">
+            <v-btn block>Logout</v-btn>
+          </div>
+        </template>
       </v-navigation-drawer>
   </template>
 
@@ -127,6 +161,11 @@ export default {
       return this.background ? 'https://cdn.vuetifyjs.com/images/backgrounds/bg-2.jpg' : undefined
     },
   },
+  methods: {
+    checkRole(){
+      return this.$store.getters.userRole;
+    }
+  }
 }
 </script>
 

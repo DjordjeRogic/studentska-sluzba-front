@@ -10,6 +10,9 @@ import StudijskiProgramDetails from '../components/StudijskiProgramDetails.vue'
 import StudentList from '../components/StudentList.vue'
 import StudentIspitList from '../components/StudentIspitList.vue'
 import PrijavljeniIspitList from '../components/PrijavljeniIspitList.vue'
+import ProfesorIspitList from '../components/ProfesorIspitList.vue'
+import UnosOcenaIspitList from '../components/UnosOcenaIspitList.vue'
+import IspitStudentList from '../components/IspitStudentList.vue'
 
 Vue.use(Router)
 
@@ -66,5 +69,22 @@ export default new Router({
             name: 'PrijavljeniIspitList',
             component: PrijavljeniIspitList
         },
+        {
+            path: '/profesorIspitList',
+            name: 'ProfesorIspitList',
+            component: ProfesorIspitList
+        },
+        {
+            path: '/unosOcenaIspitList',
+            name: 'UnosOcenaIspitList',
+            component: UnosOcenaIspitList
+        },
+        {
+            path: '/ispitStudentList/:id',
+            name: 'IspitStudentList',
+            component: IspitStudentList
+        },
+
+
     ]
 })
