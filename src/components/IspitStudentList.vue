@@ -6,6 +6,17 @@
           <span class="display-2">Unos rezultata ispita</span>
         </v-col>
         <v-col  md="auto" offset="4">
+          <v-btn
+              x-large
+              color="info"
+              @click="downloadFile"
+          >
+            <v-icon left dark>mdi-cloud-download</v-icon>
+
+            Skini u excel fajlu
+          </v-btn>
+        </v-col>
+        <v-col  md="auto">
           <v-btn @click="unesiOcene"  x-large color="success"><v-icon left>mdi-check</v-icon> Potvrdi unos</v-btn>
         </v-col>
       </v-row>
@@ -139,6 +150,7 @@ export default {
       editBodovi:0,
       id:this.$route.params.id,
       info:null,
+      download:false,
       numberRule: v  => {
         if (!isNaN(parseFloat(v)) && v >= 0 && v <= 100) return true;
         return 'Broj bodova mora biti izmedju 0 i 100';
@@ -210,7 +222,31 @@ export default {
           this.message = "Nije uspeo unos ocena ispita";
           this.snackbar=true
         });
-      }
+      },
+    downloadFile(){
+      console.log("test");
+     /* axios.get(baseUrl+"/ispit/"+this.id+"/student/download").then(response => {
+        console.log(response.data);
+
+        let FileSaver = require('file-saver');
+        let blob = new Blob([response.data],{type: 'application/vnd.ms-excel'});
+        console.log(blob.size);
+        FileSaver.saveAs(blob);
+
+      });*/
+
+      let FileSaver = require('file-saver');
+      axios.get(baseUrl+"/ispit/"+this.id+"/student/download", {
+        responseType: 'blob'
+      }).then((response) => {
+
+        // response.data is a blob type
+        FileSaver.saveAs(response.data, this.filename());
+      });
+    },
+    filename(){
+      return this.ispit.nazivSmera +"_"+this.ispit.nazivPredmeta+"_"+this.ispit.datum;
+    }
   },
   created() {
     axios.get(baseUrl+"/ispit/"+this.id+"/student").then((response) => {
