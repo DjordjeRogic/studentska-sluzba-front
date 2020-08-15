@@ -5,7 +5,27 @@
         <v-col>
           <span class="display-2">Unos rezultata ispita</span>
         </v-col>
-        <v-col  md="auto" offset="4">
+        <v-col  md="auto" offset-sm="0" offset="4">
+          <v-btn
+              x-large
+              color="info"
+              :loading="uploading"
+              @click="uploadFile"
+          >
+            <v-icon left dark>mdi-cloud-upload</v-icon>
+
+            {{uploadText}}
+          </v-btn>
+          <input
+              ref="uploader"
+              class="d-none"
+              type="file"
+              accept=".xls"
+              @change="onFileChanged"
+
+          >
+        </v-col>
+        <v-col  md="auto" >
           <v-btn
               x-large
               color="info"
@@ -155,12 +175,19 @@ export default {
         if (!isNaN(parseFloat(v)) && v >= 0 && v <= 100) return true;
         return 'Broj bodova mora biti izmedju 0 i 100';
       },
+      uploading:false,
+      selectedFile: null,
+      defaultButtonText:"Uploaduj rezultate",
+
       }
     },
   computed: {
     formTitle () {
       return this.editedIndex === -1 ? 'Registracija' : 'student'
     },
+    uploadText() {
+      return this.selectedFile ? this.selectedFile.name : this.defaultButtonText
+    }
   },
 
   watch: {
@@ -246,6 +273,25 @@ export default {
     },
     filename(){
       return this.ispit.nazivSmera +"_"+this.ispit.nazivPredmeta+"_"+this.ispit.datum;
+    },
+    uploadFile(){
+      this.uploading = true
+      window.addEventListener('focus', () => {
+        this.uploading = false
+      }, { once: true })
+
+      this.$refs.uploader.click()
+
+    },
+    onFileChanged(e){
+      this.selectedFile = e.target.files[0]
+      const formData = new FormData();
+      formData.append("file", this.selectedFile);
+      axios.post(baseUrl+"/ispit/"+this.id+"/student/upload", formData
+
+      ).then((response) => {
+        this.studenti = response.data;
+      })
     }
   },
   created() {
