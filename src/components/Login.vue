@@ -86,7 +86,12 @@ export default {
                 .dispatch("retrieveCurrentUser")
                 .then(response => {
                   console.log(response);
+                  if(this.$store.getters.userRole=="ROLE_STUDENT") {
+                    this.$store
+                        .dispatch("proveraOvereSemestra");
+                  }
                   this.$router.push({ name: "HelloWorld" });
+
                 })
                 .catch(error => {
                   if (error.response) {
@@ -94,6 +99,7 @@ export default {
                     alert("Error occured while retrieving current user.");
                   }
                 });
+
           })
           /* .catch(error => {
              if (error.response && error.response.status === 404) {
@@ -125,6 +131,8 @@ export default {
   created() {
     this.$store.dispatch('destroyToken');
     this.$store.dispatch('destroyCurrentUser');
+    this.$store.dispatch('destoryPrikaziOveru');
+
   }
 }
 </script>

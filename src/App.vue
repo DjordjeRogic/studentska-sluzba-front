@@ -24,17 +24,22 @@
         </nav>
         <SideBar v-if="isAuthenticated"/>
       <v-main>
+        <OveraIspita/>
         <router-view></router-view>
       </v-main>
+
     </v-app>
 
 </template>
 
 <script>
 import SideBar from './components/SideBarAdmin.vue'
+import OveraIspita from './components/OveraIspita.vue'
+
 export default {
   components:{
-    SideBar
+    SideBar,
+    OveraIspita
   },
   name: 'App',
   computed: {

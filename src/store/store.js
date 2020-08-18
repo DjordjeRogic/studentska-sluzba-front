@@ -10,8 +10,8 @@ export const store =  new Vuex.Store({
     state: {
         token: localStorage.getItem("access_token") || null,
         userRole: localStorage.getItem("userRole") || null,
-        currentUserId: localStorage.getItem("currentUserId") || null
-
+        currentUserId: localStorage.getItem("currentUserId") || null,
+        prikaziOveru: localStorage.getItem("prikaziOveru") || null
     },
     getters:{
         loggedIn(state){
@@ -23,6 +23,10 @@ export const store =  new Vuex.Store({
         currentUserId(state)
         {
             return state.currentUserId;
+        },
+        overio(state)
+        {
+            return state.prikaziOveru;
         }
     },
     mutations:{
@@ -45,6 +49,12 @@ export const store =  new Vuex.Store({
         destroyedCurrentUserId(state)
         {
             state.currentUserId = null;
+        },
+        retrivePrikaziOveru(state,prikaziOveru){
+            state.prikaziOveru=prikaziOveru
+        },
+        destoryPrikaziOveru(state){
+            state.prikaziOveru=false;
         }
     },
     actions:{
@@ -96,6 +106,21 @@ export const store =  new Vuex.Store({
             context.commit('destroyedUserRole');
             localStorage.removeItem('currentUserId');
             context.commit('destroyedCurrentUserId');
+        },
+        proveraOvereSemestra(context){
+                axios.get("http://localhost:8080/student/semestar/overen").then(() => {
+                    localStorage.setItem("prikaziOveru", false);
+                    context.commit('retrivePrikaziOveru', false)
+                }).catch(() => {
+                    localStorage.setItem("prikaziOveru", true);
+                    context.commit('retrivePrikaziOveru', true)
+                });
+
+        },
+        destoryPrikaziOveru(context){
+            localStorage.removeItem("prikaziOveru");
+            context.commit("destoryPrikaziOveru");
+
         }
     }
 })

@@ -10,6 +10,7 @@
           itemsPerPageOptions: [13]
          }"
         show-select
+        selectable-key="odjava"
     >
       <template v-slot:top>
         <v-toolbar flat color="white">
