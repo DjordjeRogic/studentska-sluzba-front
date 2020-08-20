@@ -13,6 +13,8 @@ import PrijavljeniIspitList from '../components/PrijavljeniIspitList.vue'
 import ProfesorIspitList from '../components/ProfesorIspitList.vue'
 import UnosOcenaIspitList from '../components/UnosOcenaIspitList.vue'
 import IspitStudentList from '../components/IspitStudentList.vue'
+import OcenaList from '../components/OcenaList.vue'
+
 
 Vue.use(Router)
 
@@ -84,7 +86,11 @@ export default new Router({
             name: 'IspitStudentList',
             component: IspitStudentList
         },
-
+        {
+            path: '/ocenaList',
+            name: 'OcenaList',
+            component: OcenaList
+        },
 
     ]
 })

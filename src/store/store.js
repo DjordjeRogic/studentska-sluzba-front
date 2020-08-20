@@ -11,7 +11,8 @@ export const store =  new Vuex.Store({
         token: localStorage.getItem("access_token") || null,
         userRole: localStorage.getItem("userRole") || null,
         currentUserId: localStorage.getItem("currentUserId") || null,
-        prikaziOveru: localStorage.getItem("prikaziOveru") || null
+        prikaziOveru: localStorage.getItem("prikaziOveru") || false,
+        user: localStorage.getItem("user") || null,
     },
     getters:{
         loggedIn(state){
@@ -27,6 +28,9 @@ export const store =  new Vuex.Store({
         overio(state)
         {
             return state.prikaziOveru;
+        },
+        user(state){
+            return state.user;
         }
     },
     mutations:{
@@ -55,6 +59,12 @@ export const store =  new Vuex.Store({
         },
         destoryPrikaziOveru(state){
             state.prikaziOveru=false;
+        },
+        retriveUser(state,user){
+          state.user = user
+        },
+        destroyUser(state){
+            state.user = null;
         }
     },
     actions:{
@@ -91,13 +101,25 @@ export const store =  new Vuex.Store({
                         localStorage.setItem('userRole', currentUser.role);
                         context.commit('retrievedUserRole', currentUser.role);
                         localStorage.setItem('currentUserId', currentUser.id);
-                        context.commit('currentUserId', currentUser.id);
+                        context.commit('retrievedCurrentUserId', currentUser.id);
+                        if(currentUser.role=="ROLE_STUDENT"){
+                            axios.get("http://localhost:8080/student/"+currentUser.id).then((response) => {
+                                localStorage.setItem("user",response.data);
+                                context.commit("retriveUser",response.data)
+                                console.log(response.data.name)
+                            })
+                        }else{
+                            localStorage.setItem("user",currentUser);
+                            context.commit("retriveUser",currentUser)
+                        }
                         resolve(response);
                     })
                     .catch(error => {
                         console.log(error);
                         reject(error);
                     })
+
+
             })
         },
         destroyCurrentUser(context){

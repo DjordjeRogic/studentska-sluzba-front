@@ -16,11 +16,10 @@
         <v-toolbar flat color="white">
           <v-toolbar-title class="display-1">Ispiti</v-toolbar-title>
           <v-spacer></v-spacer>
-          <v-dialog v-model="dialog" max-width="500px">
+          <v-dialog max-width="500px">
             <template v-slot:activator="{ on, attrs }">
               <v-btn
-                  color="primary"
-                  dark
+                  dark color="#485E88"
                   class="mb-2"
                   v-bind="attrs"
                   @click="odjaviIspite()"
@@ -89,7 +88,8 @@ export default {
       ],
       dateFormatted: this.formatDateInput(new Date().toISOString().substr(0, 10)),
       selected:[],
-      info:null
+      info:null,
+      color:"info"
     }
   },
 

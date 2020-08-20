@@ -52,7 +52,7 @@
         </v-row>
         <v-row>
           <v-col align="center">
-            <v-btn @click="login">Log in</v-btn>
+            <v-btn dark color="#485E88" x-large @click="login">Log in</v-btn>
           </v-col>
         </v-row>
       </v-container>

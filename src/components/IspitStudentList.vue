@@ -8,7 +8,8 @@
         <v-col  md="auto" offset-sm="0" offset="4">
           <v-btn
               x-large
-              color="info"
+              dark
+              color="#485E88"
               :loading="uploading"
               @click="uploadFile"
           >
@@ -28,7 +29,8 @@
         <v-col  md="auto" >
           <v-btn
               x-large
-              color="info"
+              dark
+              color="#485E88"
               @click="downloadFile"
           >
             <v-icon left dark>mdi-cloud-download</v-icon>
@@ -37,7 +39,7 @@
           </v-btn>
         </v-col>
         <v-col  md="auto">
-          <v-btn @click="unesiOcene"  x-large color="success"><v-icon left>mdi-check</v-icon> Potvrdi unos</v-btn>
+          <v-btn @click="unesiOcene"  dark x-large color="success"><v-icon left>mdi-check</v-icon> Potvrdi unos</v-btn>
         </v-col>
       </v-row>
       <v-row justify="start">

@@ -21,11 +21,17 @@ export default {
       disabled: true
     }
   },
-  mounted() {
+  created() {
+    if (this.$store.getters.overio == "false" || this.$store.getters.overio == false)
+      this.open = false;
+    else
+      this.open = true;
+
   },
   computed: {
     isStudent() {
-      if( this.$store.getters.overio=="false" || this.$store.getters.overio==false )
+      console.log('prikazi overu:' +this.$store.state.prikaziOveru)
+      if( this.$store.state.prikaziOveru=="false" || this.$store.state.prikaziOveru==false )
         return false;
       else
         return true;

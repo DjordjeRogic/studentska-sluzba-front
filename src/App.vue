@@ -24,7 +24,7 @@
         </nav>
         <SideBar v-if="isAuthenticated"/>
       <v-main>
-        <OveraIspita/>
+        <OveraSemestra/>
         <router-view></router-view>
       </v-main>
 
@@ -34,12 +34,12 @@
 
 <script>
 import SideBar from './components/SideBarAdmin.vue'
-import OveraIspita from './components/OveraIspita.vue'
+import OveraSemestra from './components/OveraSemestra.vue'
 
 export default {
   components:{
     SideBar,
-    OveraIspita
+    OveraSemestra
   },
   name: 'App',
   computed: {
@@ -49,5 +49,8 @@ export default {
   }
 }
 </script>
+<style>
+
+</style>
 
 
