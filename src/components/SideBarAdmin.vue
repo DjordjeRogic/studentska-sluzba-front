@@ -22,6 +22,35 @@
 
           <v-divider></v-divider>
 
+          <v-list-item
+                       ripple
+                       to="/profil"
+          >
+            <v-list-item-icon>
+              <v-icon>mdi-account</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>Profil</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-divider></v-divider>
+
+
+          <v-list-item v-if="checkRole()=='ROLE_PROFESOR'"
+                       ripple
+                       to="/profesorPredmetiList"
+          >
+            <v-list-item-icon>
+              <v-icon>mdi-view-dashboard</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>Moji predmeti</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-divider v-if="checkRole()=='ROLE_PROFESOR'"></v-divider>
+
+
+
           <v-list-item v-if="checkRole()=='ROLE_ADMIN'"
 
           >

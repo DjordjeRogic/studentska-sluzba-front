@@ -22,8 +22,8 @@
         <v-spacer></v-spacer>
       </v-app-bar>
         </nav>
-        <SideBar v-if="isAuthenticated"/>
-      <v-main>
+        <SideBar class="grey lighten-5" v-if="isAuthenticated"/>
+      <v-main >
         <OveraSemestra/>
         <router-view></router-view>
       </v-main>
@@ -50,7 +50,9 @@ export default {
 }
 </script>
 <style>
-
+.v-dialog__container {
+  display: unset;
+}
 </style>
 
 

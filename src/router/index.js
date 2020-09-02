@@ -14,7 +14,9 @@ import ProfesorIspitList from '../components/ProfesorIspitList.vue'
 import UnosOcenaIspitList from '../components/UnosOcenaIspitList.vue'
 import IspitStudentList from '../components/IspitStudentList.vue'
 import OcenaList from '../components/OcenaList.vue'
-
+import ProfesorPredmetiList from '../components/ProfesorPredmetiList.vue'
+import Profil from '../components/Profil.vue'
+import PredmetStudentiList from '../components/PredmetStudentiList.vue'
 
 Vue.use(Router)
 
@@ -91,6 +93,20 @@ export default new Router({
             name: 'OcenaList',
             component: OcenaList
         },
-
+        {
+            path: '/profesorPredmetiList',
+            name: 'ProfesorPredmetiList',
+            component: ProfesorPredmetiList
+        },
+        {
+            path: '/profil',
+            name: 'Profil',
+            component: Profil
+        },
+        {
+            path: '/predmetStudentiList/:id',
+            name: 'PredmetStudentiList',
+            component: PredmetStudentiList
+        },
     ]
 })

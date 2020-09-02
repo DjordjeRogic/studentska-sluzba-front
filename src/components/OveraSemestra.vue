@@ -27,11 +27,12 @@ export default {
     else
       this.open = true;
 
+
   },
   computed: {
     isStudent() {
-      console.log('prikazi overu:' +this.$store.state.prikaziOveru)
-      if( this.$store.state.prikaziOveru=="false" || this.$store.state.prikaziOveru==false )
+      console.log('prikazi overu:' +this.$store.getters.overio)
+      if( this.$store.getters.overio=="false" || this.$store.getters.overio==false )
         return false;
       else
         return true;
@@ -49,6 +50,10 @@ export default {
 
 
     }
+  },
+  mounted() {
+    this.$mount();
+    this.$forceUpdate();
   }
 }
 </script>

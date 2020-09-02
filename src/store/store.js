@@ -102,6 +102,7 @@ export const store =  new Vuex.Store({
                         context.commit('retrievedUserRole', currentUser.role);
                         localStorage.setItem('currentUserId', currentUser.id);
                         context.commit('retrievedCurrentUserId', currentUser.id);
+
                         if(currentUser.role=="ROLE_STUDENT"){
                             axios.get("http://localhost:8080/student/"+currentUser.id).then((response) => {
                                 localStorage.setItem("user",response.data);
