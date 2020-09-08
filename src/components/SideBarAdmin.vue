@@ -1,14 +1,14 @@
 <template>
       <v-navigation-drawer
-
+          class="elevation-2"
           app
           permanent
       >
         <v-list
             link
-            class="py-0"
+            class="py-0 ma-0"
         >
-          <v-list-item two-line :class="miniVariant && 'px-0'">
+          <v-list-item  two-line :class="miniVariant && 'px-0'">
             <v-list-item-avatar>
               <!-- <img src="https://randomuser.me/api/portraits/men/81.jpg"> -->
               <v-icon x-large>mdi-account-circle</v-icon>
@@ -20,7 +20,7 @@
             </v-list-item-content>
           </v-list-item>
 
-          <v-divider></v-divider>
+          <v-divider style="margin-top: -8px"></v-divider>
 
           <v-list-item
                        ripple
@@ -52,56 +52,64 @@
 
 
           <v-list-item v-if="checkRole()=='ROLE_ADMIN'"
-
+                       ripple
+                       to="/profesorList"
           >
             <v-list-item-icon>
-              <v-icon>mdi-view-dashboard</v-icon>
+              <v-icon>mdi-account-tie</v-icon>
             </v-list-item-icon>
 
             <v-list-item-content>
-              <v-list-item-title><router-link to="/profesorList"> Profesori </router-link></v-list-item-title>
+              <v-list-item-title> Profesori </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
           <v-divider v-if="checkRole()=='ROLE_ADMIN'"></v-divider>
 
           <v-list-item v-if="checkRole()=='ROLE_ADMIN'"
-
+                       ripple
+                       to="/studentList"
           >
             <v-list-item-icon>
-              <v-icon>mdi-view-dashboard</v-icon>
+              <v-icon>mdi-account-group</v-icon>
             </v-list-item-icon>
 
             <v-list-item-content>
-              <v-list-item-title><router-link to="/predmetList"> Predmeti </router-link></v-list-item-title>
+              <v-list-item-title> Studenti</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-divider  v-if="checkRole()=='ROLE_ADMIN'"></v-divider>
+
+
+
+          <v-list-item v-if="checkRole()=='ROLE_ADMIN'"
+                       ripple
+                       to="/predmetList"
+          >
+            <v-list-item-icon>
+              <v-icon>mdi-book-open-variant</v-icon>
+            </v-list-item-icon>
+
+            <v-list-item-content>
+              <v-list-item-title> Predmeti </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
           <v-divider v-if="checkRole()=='ROLE_ADMIN'"></v-divider>
 
           <v-list-item v-if="checkRole()=='ROLE_ADMIN'"
-
+                       ripple
+                       to="/smerList"
           >
             <v-list-item-icon>
-              <v-icon>mdi-view-dashboard</v-icon>
+              <v-icon>mdi-bookshelf</v-icon>
             </v-list-item-icon>
 
             <v-list-item-content>
-              <v-list-item-title><router-link to="/smerList"> Smerovi </router-link></v-list-item-title>
+              <v-list-item-title>Smerovi</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
           <v-divider  v-if="checkRole()=='ROLE_ADMIN'"></v-divider>
 
-          <v-list-item v-if="checkRole()=='ROLE_ADMIN'"
 
-          >
-            <v-list-item-icon>
-              <v-icon>mdi-view-dashboard</v-icon>
-            </v-list-item-icon>
-
-            <v-list-item-content>
-              <v-list-item-title><router-link to="/studentList"> Studenti </router-link></v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-          <v-divider  v-if="checkRole()=='ROLE_ADMIN'"></v-divider>
 
           <v-list-item  to="/studentIspitList" v-if="checkRole()=='ROLE_STUDENT'"
 

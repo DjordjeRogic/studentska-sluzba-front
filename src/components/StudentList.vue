@@ -18,7 +18,7 @@
           <v-dialog v-model="dialog" max-width="500px">
             <template v-slot:activator="{ on, attrs }">
               <v-btn
-                  color="primary"
+                  color="#485E88"
                   dark
                   class="mb-2"
                   v-bind="attrs"
@@ -80,6 +80,7 @@
           mdi-pencil
         </v-icon>
         <v-icon
+            v-show="false"
             small
             @click="deleteItem(item)"
         >
@@ -111,12 +112,17 @@
         </v-btn>
       </template>
     </v-snackbar>
+    <potvrdi ref="potvrdi"></potvrdi>
   </div>
 </template>
 <script>
 import axios from "axios";
 const baseUrl = "http://localhost:8080";
+import Potvrdi from '../components/Potvrdi.vue'
 export default {
+  components:{
+    Potvrdi
+  },
   data: () => ({
     dialog: false,
     headers: [
@@ -180,7 +186,21 @@ export default {
 
     save () {
       if (this.editedIndex > -1) {
-        Object.assign(this.studenti[this.editedIndex], this.editedItem)
+        var index = this.editedIndex;
+
+        axios.put(baseUrl+"/student",
+            this.editedItem
+        ).then(response => {
+          this.message="Uspesno izmenjen student "+response.data.name+" "+response.data.surname;
+          Object.assign(this.studenti[index], response.data)
+          this.color="success"
+          this.snackbar=true
+        }).catch(error=>{
+          this.color="error"
+          this.message = error.response.data;
+          this.snackbar=true
+        });
+
       } else {
         axios.post(baseUrl+"/student",
             this.editedItem

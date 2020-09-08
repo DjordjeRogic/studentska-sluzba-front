@@ -15,7 +15,7 @@
         <v-dialog v-model="dialog" max-width="500px">
           <template v-slot:activator="{ on, attrs }">
             <v-btn
-                color="primary"
+                color="#485E88"
                 dark
                 class="mb-2"
                 v-bind="attrs"
@@ -101,12 +101,18 @@
       </v-btn>
     </template>
   </v-snackbar>
+  <potvrdi ref="potvrdi"></potvrdi>
 </div>
 </template>
 <script>
 import axios from "axios";
 const baseUrl = "http://localhost:8080";
+import Potvrdi from '../components/Potvrdi.vue'
+
 export default {
+  components:{
+    Potvrdi
+  },
   data: () => ({
     dialog: false,
     headers: [
@@ -155,18 +161,23 @@ export default {
 
     deleteItem (item) {
       const index = this.profesori.indexOf(item)
-      confirm('Are you sure you want to delete this item?') && this.profesori.splice(index, 1)
+      this.$refs.potvrdi.otvori("Potvrda","Da li ste sigurni da zelite da obrisete profesora").then((potvrdi)=>{
+        if(potvrdi==true){
 
-      axios.delete("http://localhost:8080/profesor/"+item.id)
-          .then(response => {
-        this.message="Uspesno obrsan profesor:  "+response.data.name+ " "+response.data.username;
-        this.color="success"
-        this.snackbar=true
-      }).catch(error=>{
-        this.color="error"
-        this.message = error.response.data;
-        this.snackbar=true
-      });
+            axios.delete("http://localhost:8080/profesor/"+item.id)
+                .then(response => {
+                  this.message="Uspesno obrsan profesor:  "+response.data.name+ " "+response.data.surname;
+                  this.color="success"
+                  this.snackbar=true
+                  this.profesori.splice(index, 1)
+                }).catch(error=>{
+                  this.color="error"
+                  this.message = error.response.data;
+                  this.snackbar=true
+            });
+          }
+      })
+
 
     },
 
@@ -180,7 +191,23 @@ export default {
 
     save () {
       if (this.editedIndex > -1) {
-        Object.assign(this.profesori[this.editedIndex], this.editedItem)
+          var index = this.editedIndex;
+
+          axios.put(baseUrl+"/profesor",
+              this.editedItem
+          ).then(response => {
+            this.message="Uspesno izmenjen profesor "+response.data.name+" "+response.data.surname;
+            Object.assign(this.profesori[index], response.data)
+            this.color="success"
+            this.snackbar=true
+          }).catch(error=>{
+            this.color="error"
+            this.message = error.response.data;
+            this.snackbar=true
+          });
+
+
+
       } else {
         axios.post(baseUrl+"/profesor",
           this.editedItem
