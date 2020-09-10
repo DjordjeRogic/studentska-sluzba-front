@@ -15,7 +15,7 @@
           <v-dialog v-model="dialog" max-width="500px">
             <template v-slot:activator="{ on, attrs }">
               <v-btn
-                  color="primary"
+                  color="#485E88"
                   dark
                   class="mb-2"
                   v-bind="attrs"
@@ -99,12 +99,18 @@
         </v-btn>
       </template>
     </v-snackbar>
+    <potvrdi ref="potvrdi"></potvrdi>
   </div>
 </template>
 <script>
 import axios from "axios";
+import Potvrdi from "@/components/Potvrdi";
 const baseUrl = "http://localhost:8080";
+
 export default {
+  components:{
+    Potvrdi
+  },
   data: () => ({
     dialog: false,
     headers: [
@@ -149,12 +155,48 @@ export default {
     editItem (item) {
       this.editedIndex = this.predmeti.indexOf(item)
       this.editedItem = Object.assign({}, item)
+
+      switch (this.editedItem.kategorija){
+        case "Akademsko-opsteobrazovani":
+          this.editedItem.kategorija={}
+          this.editedItem.kategorija.value="AO";
+          break;
+        case "Teorijsko-metodoloski":
+          this.editedItem.kategorija={}
+          this.editedItem.kategorija.value="TM";
+          break;
+        case "Nucno-strucni":
+          this.editedItem.kategorija={}
+          this.editedItem.kategorija.value="NS";
+          break;
+        case "Strucno-aplikativni":
+          this.editedItem.kategorija={}
+          this.editedItem.kategorija.value="SA";
+          break;
+      }
+
       this.dialog = true
     },
 
     deleteItem (item) {
       const index = this.predmeti.indexOf(item)
-      confirm('Are you sure you want to delete this item?') && this.predmeti.splice(index, 1)
+      this.$refs.potvrdi.otvori("Potvrda","Da li ste sigurni da zelite da obrisete predmet").then((potvrdi)=>{
+        if(potvrdi==true){
+
+          axios.delete("http://localhost:8080/predmet/"+item.id)
+              .then(() => {
+                this.message="Uspesno obrsan predmet:  "+item.naziv;
+                this.color="success"
+                this.snackbar=true
+                this.predmeti.splice(index, 1)
+              }).catch(error=>{
+            this.color="error"
+            this.message = error.response.data;
+            this.snackbar=true
+          });
+        }
+      })
+
     },
 
     close () {
@@ -167,7 +209,23 @@ export default {
 
     save () {
       if (this.editedIndex > -1) {
-        Object.assign(this.predmeti[this.editedIndex], this.editedItem)
+        var index = this.editedIndex;
+
+        axios.put(baseUrl+"/predmet", {
+              'id':this.editedItem.id,
+              'naziv': this.editedItem.naziv,
+              'kategorija': this.editedItem.kategorija.value,
+            }
+        ).then(response => {
+          this.message="Uspesno izmenjen predmet "+response.data.naziv;
+          Object.assign(this.predmeti[index], response.data)
+          this.color="success"
+          this.snackbar=true
+        }).catch(error=>{
+          this.color="error"
+          this.message = error.response.data;
+          this.snackbar=true
+        });
       } else {
         axios.post(baseUrl+"/predmet",{
           'naziv':this.editedItem.naziv,

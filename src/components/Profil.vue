@@ -44,9 +44,16 @@
               <v-btn x-large @click="izmenaSifre = true"> Izmeni sifru</v-btn>
             </v-col>
 
+            <v-col  v-if="this.$store.getters.userRole=='ROLE_ADMIN'" align="center" >
+              <span style="font-size: 2em">Email:</span>
+            </v-col>
+            <v-col  v-if="this.$store.getters.userRole=='ROLE_ADMIN'" align="left">
+              <span  style="font-size: 2em">{{user.email}}</span>
+            </v-col>
+
           </v-row>
           <v-divider></v-divider>
-          <v-row>
+          <v-row  v-if="this.$store.getters.userRole!='ROLE_ADMIN'">
             <v-col align="center" >
               <span style="font-size: 2em">Email:</span>
             </v-col>

@@ -218,7 +218,7 @@ export default {
         { text: 'ESBP Bodovi', value: 'brojESBPBodova', groupable:false  },
         { text: 'Semestar', value: 'semestar' },
         { text: 'Profesor', value: 'profesor', groupable:false  },
-        { text: 'Detalji', value: 'detalji', sortable: false },
+        { text: 'Detalji', value: 'detalji', sortable: false , groupable:false },
         { text: 'Actions', value: 'actions', sortable: false , groupable:false },
       ],
       editedItem: {

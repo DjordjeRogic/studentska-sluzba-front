@@ -118,12 +118,17 @@
         </v-btn>
       </template>
     </v-snackbar>
+    <potvrdi ref="potvrdi"></potvrdi>
   </div>
 </template>
 <script>
 import axios from "axios";
+import Potvrdi from "@/components/Potvrdi";
 const baseUrl = "http://localhost:8080";
 export default {
+  components:{
+    Potvrdi
+  },
   data: () => ({
     dialog: false,
     headers: [
@@ -175,12 +180,42 @@ export default {
     editItem (item) {
       this.editedIndex = this.smerovi.indexOf(item)
       this.editedItem = Object.assign({}, item)
+      console.log("wtf")
+
+      switch (this.editedItem.obrazovnoPolje){
+        case "Interdisciplinarno":
+          console.log("wtf")
+          this.editedItem.obrazovnoPolje={}
+          this.editedItem.obrazovnoPolje.value="INT";
+          break;
+        case "Tehnicko tehnoloske nauke":
+          this.editedItem.obrazovnoPolje={}
+          this.editedItem.obrazovnoPolje.value="TTN";
+          break;
+
+      }
+
       this.dialog = true
     },
 
     deleteItem (item) {
       const index = this.smerovi.indexOf(item)
-      confirm('Are you sure you want to delete this item?') && this.smerovi.splice(index, 1)
+      this.$refs.potvrdi.otvori("Potvrda","Da li ste sigurni da zelite da obrisete smer").then((potvrdi)=>{
+        if(potvrdi==true){
+
+          axios.delete("http://localhost:8080/smer/"+item.id)
+              .then(() => {
+                this.message="Uspesno obrsan smer:  "+item.naziv;
+                this.color="success"
+                this.snackbar=true
+                this.smerovi.splice(index, 1)
+              }).catch(error=>{
+            this.color="error"
+            this.message = error.response.data;
+            this.snackbar=true
+          });
+        }
+      })
     },
 
     close () {
@@ -193,7 +228,26 @@ export default {
 
     save () {
       if (this.editedIndex > -1) {
-        Object.assign(this.smerovi[this.editedIndex], this.editedItem)
+        var index = this.editedIndex;
+
+        axios.put(baseUrl+"/smer", {
+              'id':this.editedItem.id,
+              'naziv':this.editedItem.naziv,
+              'skracenica':this.editedItem.skracenica,
+              'trajanjeUSemestrima':this.editedItem.trajanjeUSemestrima,
+              'obrazovnoPolje':this.editedItem.obrazovnoPolje.value,
+              'nazivDiplome':this.editedItem.nazivDiplome
+            }
+        ).then(response => {
+          this.message="Uspesno izmenjen smer "+response.data.naziv;
+          Object.assign(this.smerovi[index], response.data)
+          this.color="success"
+          this.snackbar=true
+        }).catch(error=>{
+          this.color="error"
+          this.message = error.response.data;
+          this.snackbar=true
+        });
       } else {
         axios.post(baseUrl+"/smer",{
               'naziv':this.editedItem.naziv,
