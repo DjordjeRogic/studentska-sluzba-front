@@ -162,7 +162,7 @@
           <v-icon
               small
               class="mr-2"
-              @click="editItem(item)"
+              @click="removePredmet(item)"
           >
             mdi-minus
           </v-icon>
@@ -284,7 +284,28 @@ export default {
 
     save () {
       if (this.editedIndex > -1) {
-        Object.assign(this.predmeti[this.editedIndex], this.editedItem)
+        var index = this.editedIndex;
+
+        axios.put(baseUrl+"/studijskiProgram", {
+              'id':this.editedItem.id,
+              'smer':this.smer,
+              'predmet':this.editedItem.predmet,
+              'profesor':this.editedItem.profesor,
+              'brojPredavanjaUGodini':this.editedItem.brojPredavanjaUGodini,
+              'brojESBPBodova':this.editedItem.brojESBPBodova,
+              'sifraStudijskogPrograma':this.editedItem.sifraStudijskogPrograma,
+              'semestar':this.editedItem.semestar
+            }
+        ).then(response => {
+          this.message="Uspesno izmenjen studijski program "+response.data.predmet.naziv;
+          Object.assign(this.predmeti[index], response.data)
+          this.color="success"
+          this.snackbar=true
+        }).catch(error=>{
+          this.color="error"
+          this.message = error.response.data;
+          this.snackbar=true
+        });
       } else {
         axios.post(baseUrl+"/studijskiProgram",{
               'smer':this.smer,
@@ -308,10 +329,26 @@ export default {
         });
         }
       this.edit = false
+      this.close()
 
-      },
+
+    },
     detalji(item){
       this.$router.push({ path: `/sudijskiProgram/${item.id}` })
+    },
+    removePredmet(item){
+      const index = this.predmeti.indexOf(item)
+      axios.delete(baseUrl+"/studijskiProgram/"+item.id).then(() => {
+        this.predmeti.splice(index,1);
+        this.message="Uspesno uklonjen predmet i ispiti.";
+        this.color="success"
+        this.snackbar=true
+        this.close();
+        }).catch(error=>{
+        this.color="error"
+        this.message = error.response.data;
+        this.snackbar=true
+      });
     }
 
   },

@@ -15,7 +15,7 @@
           <v-dialog v-model="dialog" max-width="500px">
             <template v-slot:activator="{ on, attrs }">
               <v-btn
-                  color="primary"
+                  color="#485E88"
                   dark
                   class="mb-2"
                   v-bind="attrs"
@@ -180,11 +180,9 @@ export default {
     editItem (item) {
       this.editedIndex = this.smerovi.indexOf(item)
       this.editedItem = Object.assign({}, item)
-      console.log("wtf")
 
       switch (this.editedItem.obrazovnoPolje){
         case "Interdisciplinarno":
-          console.log("wtf")
           this.editedItem.obrazovnoPolje={}
           this.editedItem.obrazovnoPolje.value="INT";
           break;

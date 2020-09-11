@@ -168,7 +168,7 @@
               <v-icon
                   small
                   class="mr-2"
-                  @click="editItem(item)"
+                  @click="deleteItem(item)"
               >
                 mdi-minus
               </v-icon>
@@ -187,7 +187,7 @@
     <v-snackbar
         v-model="snackbar"
         right
-        timeout=2000
+        timeout=4000
         top
         :color="color"
     >
@@ -205,13 +205,18 @@
         </v-btn>
       </template>
     </v-snackbar>
+    <potvrdi ref="potvrdi"></potvrdi>
   </div>
 </template>
 <script>
 import axios from "axios";
 const baseUrl = "http://localhost:8080";
+import Potvrdi from "@/components/Potvrdi";
 
 export default {
+  components:{
+    Potvrdi
+  },
   data(){
     return{
       studijskiProgram:null,
@@ -253,6 +258,9 @@ export default {
         {naziv: 'Dodatni', value:'DO'},
       ],
       dateFormatted: this.formatDateInput(new Date().toISOString().substr(0, 10)),
+      edit:false,
+      message:"",
+      color:"primary"
       }
     },
 
@@ -275,14 +283,70 @@ export default {
       return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
     },
     editItem (item) {
-      this.editedIndex = this.smerovi.indexOf(item)
+      this.editedIndex = this.ispiti.indexOf(item)
       this.editedItem = Object.assign({}, item)
+      switch (this.editedItem.rok){
+        case "Januarski":
+          this.editedItem.rok={}
+          this.editedItem.rok.value="JAN";
+          break;
+        case "Februarski":
+          this.editedItem.rok={}
+          this.editedItem.rok.value="FEB";
+          break;
+        case "Aprilski":
+          this.editedItem.rok={}
+          this.editedItem.rok.value="APR";
+          break;
+        case "Junski":
+          this.editedItem.rok={}
+          this.editedItem.rok.value="JUN";
+          break;
+        case "Julski":
+          this.editedItem.rok={}
+          this.editedItem.rok.value="JUL";
+          break;
+        case "Avgustovski":
+          this.editedItem.rok={}
+          this.editedItem.rok.value="AVG";
+          break;
+        case "Septembarski":
+          this.editedItem.rok={}
+          this.editedItem.rok.value="SEP";
+          break;
+        case "Oktobarski":
+          this.editedItem.rok={}
+          this.editedItem.rok.value="OKT";
+          break;
+        case "Dodatni":
+          this.editedItem.rok={}
+          this.editedItem.rok.value="DO";
+          break;
+
+      }
+      this.editedItem.datum = this.formatDateInput(this.editedItem.datum);
+      this.edit=true
       this.dialog = true
     },
 
     deleteItem (item) {
-      const index = this.smerovi.indexOf(item)
-      confirm('Are you sure you want to delete this item?') && this.smerovi.splice(index, 1)
+      const index = this.ispiti.indexOf(item)
+      this.$refs.potvrdi.otvori("Potvrda","Da li ste sigurni da zelite da uklonite ispit za "+item.rok+" rok").then((potvrdi)=>{
+        if(potvrdi==true){
+
+          axios.delete("http://localhost:8080/studijskiProgram/"+this.studijskiProgram.id+"/ispit/"+item.id)
+              .then(() => {
+                this.message="Uspesno uklonjen ispit za "+item.rok+" rok";
+                this.color="success"
+                this.snackbar=true
+                this.ispiti.splice(index, 1)
+              }).catch(error=>{
+            this.color="error"
+            this.message = error.response.data;
+            this.snackbar=true
+          });
+        }
+      })
     },
 
     close () {
@@ -295,7 +359,26 @@ export default {
 
     save () {
       if (this.editedIndex > -1) {
-        Object.assign(this.smerovi[this.editedIndex], this.editedItem)
+        var index = this.editedIndex;
+
+        axios.put(baseUrl+"/ispit", {
+              'id':this.editedItem.id,
+              'datum':this.editedItem.datum,
+              'programId':this.studijskiProgram.id,
+              'vremeOdrzavanja':this.editedItem.vremeOdrzavanja,
+              'mestoOdrzavanja':this.editedItem.mestoOdrzavanja,
+              'rok':this.editedItem.rok.value
+            }
+        ).then(response => {
+          this.message="Uspesno izmenjen ispit za "+response.data.rok+" rok.";
+          Object.assign(this.ispiti[index], response.data)
+          this.color="success"
+          this.snackbar=true
+        }).catch(error=>{
+          this.color="error"
+          this.message = error.response.data;
+          this.snackbar=true
+        });
       } else {
         axios.post(baseUrl+"/ispit",{
               'programId':this.studijskiProgram.id,
@@ -316,6 +399,7 @@ export default {
         });
 
       }
+      this.edit = false;
       this.close()
     },
   },
