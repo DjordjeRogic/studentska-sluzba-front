@@ -5,10 +5,10 @@
       <v-col>
         <span class="display-2">{{ smer.naziv }}</span>
       </v-col>
-      <v-col  md="auto" offset="4">
+      <v-col v-show="false"  md="auto" offset="4">
         <v-btn>Izmeni</v-btn>
       </v-col>
-      <v-col md="auto">
+      <v-col v-show="false" md="auto">
         <v-btn>Obrisi</v-btn>
       </v-col>
     </v-row>
@@ -54,7 +54,7 @@
             <v-dialog v-model="dialog" max-width="500px">
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
-                    color="primary"
+                    color="#485E88"
                     dark
                     class="mb-2"
                     v-bind="attrs"
@@ -65,76 +65,80 @@
                 <v-card-title>
                   <span class="headline">Dodaj predmet</span>
                 </v-card-title>
-
-                <v-card-text>
-                  <v-container>
-                    <v-row>
-                      <v-col >
-                        <v-select
-                            filled
-                            v-model="editedItem.predmet"
-                            :items="noviPredmeti"
-                            item-text="naziv"
-                            label="Predmet"
-                            return-object
-                            v-if="edit != true"
-                        ></v-select>
-                      </v-col>
-                    </v-row>
-                    <v-row>
-                      <v-col >
-                        <v-select
-                            filled
-                            v-model="editedItem.profesor"
-                            :items="profesori"
-                            item-text="name"
-                            label="Profesor"
-                            return-object
-                        >
-                          <template v-slot:selection="data">
-                             {{ data.item.name }} {{ data.item.surname }} ,{{ data.item.sifraProfesora }}
-                          </template>
-                          <template v-slot:item="data">
-                            {{ data.item.name }} {{ data.item.surname }} ,{{ data.item.sifraProfesora }}
-                          </template>
-                        </v-select>
-                      </v-col>
-                    </v-row>
-                    <v-row>
-                      <v-col >
-                        <v-text-field filled v-model="editedItem.sifraStudijskogPrograma" label="Sifra Studijskog Programa"></v-text-field>
-                      </v-col>
-                    </v-row>
-                    <v-row>
-                      <v-col >
-                        <v-select
-                            filled
-                            v-model="editedItem.semestar"
-                            :items="semestri"
-                            item-text="broj"
-                            item-value="value"
-                            label="Semestar"
-                        ></v-select>
-                      </v-col>
-                    </v-row>
-                    <v-row>
-                      <v-col >
-                        <v-text-field type="number" filled v-model="editedItem.brojPredavanjaUGodini" label="Broj predavanja"></v-text-field>
-                      </v-col>
-                    </v-row>
-                    <v-row>
-                      <v-col >
-                        <v-text-field type="number" filled v-model="editedItem.brojESBPBodova" label="ESBP Bodovi"></v-text-field>
-                      </v-col>
-                    </v-row>
-                  </v-container>
-                </v-card-text>
+                <v-form ref="form">
+                  <v-card-text>
+                    <v-container>
+                      <v-row>
+                        <v-col >
+                          <v-select
+                              :rules="predmetRules"
+                              filled
+                              v-model="editedItem.predmet"
+                              :items="noviPredmeti"
+                              item-text="naziv"
+                              label="Predmet"
+                              return-object
+                              v-if="edit != true"
+                          ></v-select>
+                        </v-col>
+                      </v-row>
+                      <v-row>
+                        <v-col >
+                          <v-select
+                              :rules="profesorRules"
+                              filled
+                              v-model="editedItem.profesor"
+                              :items="profesori"
+                              item-text="name"
+                              label="Profesor"
+                              return-object
+                          >
+                            <template v-slot:selection="data">
+                               {{ data.item.name }} {{ data.item.surname }} ,{{ data.item.sifraProfesora }}
+                            </template>
+                            <template v-slot:item="data">
+                              {{ data.item.name }} {{ data.item.surname }} ,{{ data.item.sifraProfesora }}
+                            </template>
+                          </v-select>
+                        </v-col>
+                      </v-row>
+                      <v-row>
+                        <v-col >
+                          <v-text-field :rules="sifraRules" filled v-model="editedItem.sifraStudijskogPrograma" label="Sifra Studijskog Programa"></v-text-field>
+                        </v-col>
+                      </v-row>
+                      <v-row>
+                        <v-col >
+                          <v-select
+                              :rules="smestarRules"
+                              filled
+                              v-model="editedItem.semestar"
+                              :items="semestri"
+                              item-text="broj"
+                              item-value="value"
+                              label="Semestar"
+                          ></v-select>
+                        </v-col>
+                      </v-row>
+                      <v-row>
+                        <v-col >
+                          <v-text-field :rules="brojPredavanjaRules" type="number" filled v-model="editedItem.brojPredavanjaUGodini" label="Broj predavanja"></v-text-field>
+                        </v-col>
+                      </v-row>
+                      <v-row>
+                        <v-col >
+                          <v-text-field :rules="esbpRules" type="number" filled v-model="editedItem.brojESBPBodova" label="ESBP Bodovi"></v-text-field>
+                        </v-col>
+                      </v-row>
+                    </v-container>
+                  </v-card-text>
 
                 <v-card-actions>
                   <v-spacer></v-spacer>
                   <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
                   <v-btn color="blue darken-1" text @click="save()">Save</v-btn>
                 </v-card-actions>
+                </v-form>
               </v-card>
             </v-dialog>
 
@@ -156,7 +160,7 @@
           {{item.profesor.name}} {{item.profesor.surname}}
         </template>
         <template v-slot:item.detalji="{ item }">
-          <v-btn @click="detalji(item)">Detalji</v-btn>
+          <v-btn color="#485E88" dark @click="detalji(item)">Detalji</v-btn>
         </template>
         <template v-slot:item.actions="{ item }">
           <v-icon
@@ -210,7 +214,7 @@ export default {
   data(){
     return{
       id:this.$route.params.id,
-      smer:null,
+      smer:{},
       predmeti:[],
       headers: [
         { text: 'Naziv', value: 'naziv', groupable:false },
@@ -252,7 +256,37 @@ export default {
         {broj: 'VIII', value:8},
       ],
       edit:false,
-      snackbar:false
+      snackbar:false,
+      message:"",
+      color:"",
+      obrazovnaPolja:[
+        {naziv: 'Interdisciplinarno', value:'INT'},
+        {naziv: 'Tehnicko tehnoloske nauke', value:'TTN'},
+      ],
+      selectedObrazovnoPolje:{naziv: 'Interdisciplinarno', value:'INT'},
+
+      predmetRules:[
+        v=> !!v || 'Predmet mora biti izabran.',
+      ],
+      profesorRules:[
+        v=> !!v || 'Profesor mora biti izabran.',
+      ],
+      sifraRules:[
+        v=> !!v || 'Sifra mora biti unesena',
+        v=> /^[A-Z0-9]*$/.test(v) || 'Sifra moze da sadrzi samo velika slova i brojeve.',
+      ],
+      brojPredavanjaRules:[
+        v=> !!v || 'Broj predavanja mora biti unesen',
+        v=> v>0 || 'Broj predavanja ne moze biti manji od 1',
+      ],
+      esbpRules:[
+        v=> !!v || 'Broj ESBP bodova mora biti unesen',
+        v=> v>0 || 'Broj ESBP bodova ne moze biti manji od 1',
+        v=> v<61 || 'Broj ESBP bodova ne moze biti veci od 60',
+      ],
+      smestarRules:[
+        v=> !!v || 'Broj semestara mora biti izabran',
+      ],
     }
   },
   watch: {
@@ -280,9 +314,14 @@ export default {
         this.editedIndex = -1
       })
       this.edit = false
+      this.$refs.form.resetValidation();
+
     },
 
     save () {
+      if(this.$refs.form.validate() == false){
+        return;
+      }
       if (this.editedIndex > -1) {
         var index = this.editedIndex;
 
@@ -317,7 +356,7 @@ export default {
               'semestar':this.editedItem.semestar
             }
         ).then(response => {
-          this.message="Uspesno dodat predmet:  "+response.data.naziv;
+          this.message="Uspesno dodat predmet:  "+response.data.predmet.naziv;
           this.predmeti.push(response.data)
           this.color="success"
           this.snackbar=true

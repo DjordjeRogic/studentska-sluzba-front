@@ -2,8 +2,8 @@
   <div>
     <v-data-table
         :headers="headers"
-        :items="studenti"
-        class="elevation-1"
+        :items="filterStudent"
+        class="elevation-1 ma-3"
         :footer-props="{
         itemsPerPageOptions: [15]
        }"
@@ -29,39 +29,40 @@
               <v-card-title>
                 <span class="headline">{{ formTitle }}</span>
               </v-card-title>
-
-              <v-card-text>
-                <v-container>
-                  <v-row>
-                    <v-col >
-                      <v-select
-                          filled
-                          v-model="editedItem.smer"
-                          :items="smerovi"
-                          item-text="naziv"
-                          return-object
-                          label="Smer"
-                      ></v-select>
-                    </v-col>
-                  </v-row>
-                  <v-row>
-                    <v-col >
-                      <v-text-field filled v-model="editedItem.name" label="Ime"></v-text-field>
-                    </v-col>
-                  </v-row>
-                  <v-row>
-                    <v-col>
-                      <v-text-field filled v-model="editedItem.surname" label="Prezime"></v-text-field>
-                    </v-col>
-                  </v-row>
-                  <v-row>
-                    <v-col>
-                      <v-text-field filled v-model="editedItem.email" label="Email"></v-text-field>
-                    </v-col>
-                  </v-row>
-                </v-container>
-              </v-card-text>
-
+              <v-form ref="form">
+                <v-card-text>
+                  <v-container>
+                    <v-row>
+                      <v-col >
+                        <v-select
+                            :rules="selectRules"
+                            filled
+                            v-model="editedItem.smer"
+                            :items="smerovi"
+                            item-text="naziv"
+                            return-object
+                            label="Smer"
+                        ></v-select>
+                      </v-col>
+                    </v-row>
+                    <v-row>
+                      <v-col >
+                        <v-text-field :rules="imeRules" filled v-model="editedItem.name" label="Ime"></v-text-field>
+                      </v-col>
+                    </v-row>
+                    <v-row>
+                      <v-col>
+                        <v-text-field :rules="prezimeRules" filled v-model="editedItem.surname" label="Prezime"></v-text-field>
+                      </v-col>
+                    </v-row>
+                    <v-row>
+                      <v-col>
+                        <v-text-field :rules="emailRules" filled v-model="editedItem.email" label="Email"></v-text-field>
+                      </v-col>
+                    </v-row>
+                  </v-container>
+                </v-card-text>
+              </v-form>
               <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
@@ -70,6 +71,13 @@
             </v-card>
           </v-dialog>
         </v-toolbar>
+        <v-row>
+          <v-col><v-text-field v-model="imeFilter" label="Ime" class="mx-4"></v-text-field></v-col>
+          <v-col><v-text-field v-model="prezimeFilter" label="Prezime" class="mx-4"></v-text-field></v-col>
+          <v-col><v-text-field v-model="emailFilter" label="Email" class="mx-4"></v-text-field></v-col>
+          <v-col><v-text-field v-model="indexFilter" label="Broj indexa" class="mx-4"></v-text-field></v-col>
+
+        </v-row>
       </template>
       <template v-slot:item.actions="{ item }">
         <v-icon
@@ -87,9 +95,7 @@
           mdi-delete
         </v-icon>
       </template>
-      <template v-slot:no-data>
-        <v-btn color="primary" @click="initialize">Reset</v-btn>
-      </template>
+
     </v-data-table>
 
     <v-snackbar
@@ -125,6 +131,10 @@ export default {
   },
   data: () => ({
     dialog: false,
+    imeFilter:'',
+    prezimeFilter:'',
+    emailFilter:'',
+    indexFilter:'',
     headers: [
       { text: 'Ime', value: 'name' },
       { text: 'Prezime', value: 'surname' },
@@ -150,13 +160,35 @@ export default {
     snackbar:false,
     message:'',
     color:'success',
-    smerovi:[]
+    smerovi:[],
+    imeRules:[
+      v=> !!v || 'Ime mora biti uneseno',
+      v=> /^[A-Z]{1}[a-z]*$/.test(v) || 'Ime mora poceti velikim slovom i ne moze imati specijalne karaktere, velika slova ili brojeve.',
+
+    ],
+    prezimeRules:[
+      v=> !!v || 'Prezime mora biti uneseno',
+      v=> /^[A-Z]{1}[a-z]*$/.test(v) || 'Prezime mora poceti velikim slovom i ne moze imati specijalne karaktere, velika slova ili brojeve.',
+    ],
+    emailRules:[
+      v=> !!v || 'E-mail mora biti unesen',
+      v=> /.+@uns.ac.rs+/.test(v) || 'E-mail mora biti od uns naloga (@uns.ac.rs)',
+    ],
+    selectRules:[
+      v=> !!v || 'Smer mora biti izabran',
+    ]
   }),
 
   computed: {
     formTitle () {
       return this.editedIndex === -1 ? 'Registracija' : 'student'
     },
+    filterStudent: function(){
+      return this.studenti.filter((student)=>{
+        return (student.name.toUpperCase().match(this.imeFilter.toUpperCase())) && (student.surname.toUpperCase().match(this.prezimeFilter.toUpperCase()))
+            && (student.email.toUpperCase().match(this.emailFilter.toUpperCase())) && (student.brojIndexa.toUpperCase().match(this.indexFilter.toUpperCase()));
+      });
+    }
   },
 
   watch: {
@@ -182,9 +214,14 @@ export default {
         this.editedItem = Object.assign({}, this.defaultItem)
         this.editedIndex = -1
       })
+      this.$refs.form.resetValidation();
+
     },
 
     save () {
+      if(this.$refs.form.validate() == false){
+        return;
+      }
       if (this.editedIndex > -1) {
         var index = this.editedIndex;
 

@@ -9,11 +9,20 @@ Vue.config.productionTip = false
 
 axios.interceptors.request.use(config => {
   let token = localStorage.getItem("access_token");
-  console.log(token);
   if(token != null){
     config.headers.common["Authorization"] = `Bearer ${token}`;
   }
   return config;
+})
+
+axios.interceptors.response.use(function (response){
+  return response;
+}, function (error){
+  if(401 == error.response.status){
+    console.log("401")
+    store.dispatch("destroyCurrentUser");
+  }
+  return Promise.reject(error)
 })
 
 new Vue({

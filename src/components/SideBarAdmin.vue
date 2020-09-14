@@ -1,10 +1,12 @@
-<template>
+<template >
       <v-navigation-drawer
           class="elevation-2"
           app
           permanent
+
       >
         <v-list
+
             link
             class="py-0 ma-0"
         >
@@ -41,7 +43,7 @@
                        to="/profesorPredmetiList"
           >
             <v-list-item-icon>
-              <v-icon>mdi-view-dashboard</v-icon>
+              <v-icon>mdi-book-open-variant</v-icon>
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title>Moji predmeti</v-list-item-title>
@@ -145,7 +147,7 @@
                        to="/profesorIspitList"
           >
             <v-list-item-icon>
-              <v-icon>mdi-view-dashboard</v-icon>
+              <v-icon>mdi-playlist-edit</v-icon>
             </v-list-item-icon>
 
             <v-list-item-content>
@@ -160,7 +162,7 @@
                        to="/unosOcenaIspitList"
           >
             <v-list-item-icon>
-              <v-icon>mdi-view-dashboard</v-icon>
+              <v-icon>mdi-playlist-star</v-icon>
             </v-list-item-icon>
 
             <v-list-item-content>

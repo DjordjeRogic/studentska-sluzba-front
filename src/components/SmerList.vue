@@ -3,7 +3,7 @@
     <v-data-table
         :headers="headers"
         :items="smerovi"
-        class="elevation-1"
+        class="elevation-1 ma-3"
         :footer-props="{
         itemsPerPageOptions: [15]
        }"
@@ -27,44 +27,46 @@
                 <span class="headline">{{ formTitle }}</span>
               </v-card-title>
 
-              <v-card-text>
-                <v-container>
-                  <v-row>
-                    <v-col >
-                      <v-text-field filled v-model="editedItem.naziv" label="Naziv"></v-text-field>
-                    </v-col>
-                  </v-row>
-                  <v-row>
-                    <v-col>
-                      <v-text-field filled v-model="editedItem.skracenica" label="Skracenica"></v-text-field>
-                    </v-col>
-                  </v-row>
-                  <v-row>
-                    <v-col>
-                      <v-select
-                          filled
-                          v-model="editedItem.obrazovnoPolje"
-                          :items="obrazovnaPolja"
-                          item-text="naziv"
-                          item-value="value"
-                          label="Obrazovno polje"
-                          return-object
-                      ></v-select>
-                    </v-col>
-                  </v-row>
-                  <v-row>
-                    <v-col>
-                      <v-text-field filled v-model="editedItem.nazivDiplome" label="Naziv Diplome"></v-text-field>
-                    </v-col>
-                  </v-row>
-                  <v-row>
-                    <v-col>
-                      <v-text-field type="number" filled v-model="editedItem.trajanjeUSemestrima" label="Trajanje u semestrima"></v-text-field>
-                    </v-col>
-                  </v-row>
-                </v-container>
-              </v-card-text>
-
+              <v-form ref="form">
+                <v-card-text>
+                  <v-container>
+                    <v-row>
+                      <v-col >
+                        <v-text-field :rules="nazivRules" filled v-model="editedItem.naziv" label="Naziv"></v-text-field>
+                      </v-col>
+                    </v-row>
+                    <v-row>
+                      <v-col>
+                        <v-text-field :rules="skracenicaRules" filled v-model="editedItem.skracenica" label="Skracenica"></v-text-field>
+                      </v-col>
+                    </v-row>
+                    <v-row>
+                      <v-col>
+                        <v-select
+                            :rules="obrazovnoPoljeRules"
+                            filled
+                            v-model="editedItem.obrazovnoPolje"
+                            :items="obrazovnaPolja"
+                            item-text="naziv"
+                            item-value="value"
+                            label="Obrazovno polje"
+                            return-object
+                        ></v-select>
+                      </v-col>
+                    </v-row>
+                    <v-row>
+                      <v-col>
+                        <v-text-field :rules="nazivDiplomeRules" filled v-model="editedItem.nazivDiplome" label="Naziv Diplome"></v-text-field>
+                      </v-col>
+                    </v-row>
+                    <v-row>
+                      <v-col>
+                        <v-text-field :rules="smestarRules" type="number" filled v-model="editedItem.trajanjeUSemestrima" label="Trajanje u semestrima"></v-text-field>
+                      </v-col>
+                    </v-row>
+                  </v-container>
+                </v-card-text>
+              </v-form>
               <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
@@ -75,7 +77,7 @@
         </v-toolbar>
       </template>
       <template v-slot:item.detalji="{ item }">
-        <v-btn @click="detalji(item)">Detalji</v-btn>
+        <v-btn color="#485E88" dark @click="detalji(item)">Detalji</v-btn>
       </template>
       <template v-slot:item.actions="{ item }">
 
@@ -93,9 +95,7 @@
           mdi-delete
         </v-icon>
       </template>
-      <template v-slot:no-data>
-        <v-btn color="primary" @click="initialize">Reset</v-btn>
-      </template>
+
     </v-data-table>
 
     <v-snackbar
@@ -163,6 +163,27 @@ export default {
       {naziv: 'Tehnicko tehnoloske nauke', value:'TTN'},
     ],
     selectedObrazovnoPolje:{naziv: 'Interdisciplinarno', value:'INT'},
+    nazivRules:[
+      v=> !!v || 'Naziv mora biti uneseno',
+      v=> /^[A-Z]{1}/.test(v) || 'Naziv mora poceti velikim slovom.',
+      v=> /^[A-Z]{1}[a-zA-Z0-9 ]*$/.test(v) || 'Naziv ne moze da sadrzi specijalne karaktere.',
+    ],
+    skracenicaRules:[
+      v=> !!v || 'Skracenica mora biti unesena',
+      v=> /^[A-Z0-9]*$/.test(v) || 'Skracenica moze da sadrzi samo velika slova i brojeve.',
+    ],
+    obrazovnoPoljeRules:[
+      v=> !!v || 'Obrazovno polje mora biti izabrano.',
+    ],
+    nazivDiplomeRules:[
+      v=> !!v || 'Naziv diplome mora biti unesen',
+      v=> /^[A-Za-z ]*$/.test(v) || 'Naziv diplome moze da sadrzi samo slova i razmake.',
+    ],
+    smestarRules:[
+      v=> !!v || 'Broj semestara mora biti unesen',
+      v=> v>0 || 'Broj semestara ne moze biti manji od 0 ili 0',
+      v=> v<9 || 'Broj semestara ne moze biti veci od 8',
+    ],
   }),
 
   computed: {
@@ -222,9 +243,14 @@ export default {
         this.editedItem = Object.assign({}, this.defaultItem)
         this.editedIndex = -1
       })
+      this.$refs.form.resetValidation();
+
     },
 
     save () {
+      if(this.$refs.form.validate() == false){
+        return;
+      }
       if (this.editedIndex > -1) {
         var index = this.editedIndex;
 

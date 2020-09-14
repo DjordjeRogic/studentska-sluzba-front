@@ -2,12 +2,14 @@
 <div>
   <v-data-table
       :headers="headers"
-      :items="profesori"
-      class="elevation-1"
+      :items="filterProfesor"
+      class="elevation-1 ma-3"
       :footer-props="{
         itemsPerPageOptions: [15]
        }"
+      :search="search"
   >
+
     <template v-slot:top>
       <v-toolbar flat color="white">
         <v-toolbar-title class="display-1">Profesori</v-toolbar-title>
@@ -26,32 +28,32 @@
             <v-card-title>
               <span class="headline">{{ formTitle }}</span>
             </v-card-title>
-
-            <v-card-text>
-              <v-container>
-                <v-row>
-                  <v-col >
-                    <v-text-field filled v-model="editedItem.name" label="Ime"></v-text-field>
-                  </v-col>
-                </v-row>
-                <v-row>
-                  <v-col>
-                    <v-text-field filled v-model="editedItem.surname" label="Prezime"></v-text-field>
-                  </v-col>
-                </v-row>
-                <v-row>
-                  <v-col>
-                    <v-text-field filled v-model="editedItem.email" label="Email"></v-text-field>
-                  </v-col>
-                </v-row>
-                <v-row>
-                  <v-col>
-                    <v-text-field filled v-model="editedItem.sifraProfesora" label="Sifra Profesora"></v-text-field>
-                  </v-col>
-                </v-row>
-              </v-container>
-            </v-card-text>
-
+            <v-form ref="form">
+              <v-card-text>
+                <v-container>
+                  <v-row>
+                    <v-col >
+                      <v-text-field :rules="imeRules" filled v-model="editedItem.name" label="Ime"></v-text-field>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col>
+                      <v-text-field :rules="prezimeRules" filled v-model="editedItem.surname" label="Prezime"></v-text-field>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col>
+                      <v-text-field :rules="emailRules" filled v-model="editedItem.email" label="Email"></v-text-field>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col>
+                      <v-text-field :rules="sifraRules" filled v-model="editedItem.sifraProfesora" label="Sifra Profesora"></v-text-field>
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-card-text>
+            </v-form>
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
@@ -60,6 +62,15 @@
           </v-card>
         </v-dialog>
       </v-toolbar>
+      <v-container>
+        <v-row>
+          <v-col><v-text-field v-model="imeFilter" label="Ime" class="mx-4"></v-text-field></v-col>
+          <v-col><v-text-field v-model="prezimeFilter" label="Prezime" class="mx-4"></v-text-field></v-col>
+          <v-col><v-text-field v-model="emailFilter" label="Email" class="mx-4"></v-text-field></v-col>
+          <v-col><v-text-field v-model="sifraFilter" label="Sifra profesora" class="mx-4"></v-text-field></v-col>
+
+        </v-row>
+      </v-container>
     </template>
     <template v-slot:item.actions="{ item }">
       <v-icon
@@ -75,9 +86,6 @@
       >
         mdi-delete
       </v-icon>
-    </template>
-    <template v-slot:no-data>
-      <v-btn color="primary" @click="initialize">Reset</v-btn>
     </template>
   </v-data-table>
 
@@ -95,7 +103,7 @@
           dark
           text
           v-bind="attrs"
-          @click="snackbar = false"
+          @click="closeSnackbar"
       >
         Close
       </v-btn>
@@ -115,6 +123,11 @@ export default {
   },
   data: () => ({
     dialog: false,
+    search:'',
+    imeFilter:'',
+    prezimeFilter:'',
+    emailFilter:'',
+    sifraFilter:'',
     headers: [
       { text: 'Ime', value: 'name' },
       { text: 'Prezime', value: 'surname' },
@@ -138,13 +151,39 @@ export default {
     },
     snackbar:false,
     message:'',
-    color:'success'
+    color:'success',
+    imeRules:[
+      v=> !!v || 'Ime mora biti uneseno',
+      v=> /^[A-Z]{1}[a-z]*$/.test(v) || 'Ime mora poceti velikim slovom i ne moze imati specijalne karaktere, velika slova ili brojeve.',
+
+    ],
+    prezimeRules:[
+      v=> !!v || 'Prezime mora biti uneseno',
+      v=> /^[A-Z]{1}[a-z]*$/.test(v) || 'Prezime mora poceti velikim slovom i ne moze imati specijalne karaktere, velika slova ili brojeve.',
+    ],
+    emailRules:[
+      v=> !!v || 'E-mail mora biti unesen',
+      v=> /.+@uns.ac.rs+/.test(v) || 'E-mail mora biti od uns naloga (@uns.ac.rs)',
+    ],
+    sifraRules:[
+      v=> !!v || 'Sifra mora biti unesena',
+    ],
   }),
 
   computed: {
     formTitle () {
       return this.editedIndex === -1 ? 'Registracija' : 'Profesor'
     },
+    filterProfesor: function(){
+
+
+      return this.profesori.filter((profesor)=>{
+
+
+        return (profesor.name.toUpperCase().match(this.imeFilter.toUpperCase())) && (profesor.surname.toUpperCase().match(this.prezimeFilter.toUpperCase()))
+            && (profesor.email.toUpperCase().match(this.emailFilter.toUpperCase())) && (profesor.sifraProfesora.toUpperCase().match(this.sifraFilter.toUpperCase()));
+      });
+    }
   },
 
   watch: {
@@ -187,9 +226,13 @@ export default {
         this.editedItem = Object.assign({}, this.defaultItem)
         this.editedIndex = -1
       })
+      this.$refs.form.resetValidation();
     },
 
     save () {
+       if(this.$refs.form.validate() == false){
+           return;
+       }
       if (this.editedIndex > -1) {
           var index = this.editedIndex;
 
@@ -225,6 +268,10 @@ export default {
       }
       this.close()
     },
+    closeSnackbar(){
+      this.snackbar=false;
+    }
+
   },
   mounted() {
     axios.get("http://localhost:8080/profesor").then((response) => {

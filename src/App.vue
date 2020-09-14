@@ -1,7 +1,7 @@
 <template>
 
     <v-app class="grey lighten-4">
-      <nav v-if="isAuthenticated">
+      <nav  v-if="isAuthenticated">
       <v-app-bar
           app
 
@@ -18,12 +18,12 @@
             width="70"
         />
         </v-toolbar-items>
-        <v-toolbar-title >Studentska sluzba</v-toolbar-title>
+        <v-toolbar-title  >Studentska sluzba</v-toolbar-title>
         <v-spacer></v-spacer>
       </v-app-bar>
         </nav>
         <SideBar class="grey lighten-5" v-if="isAuthenticated"/>
-      <v-main >
+      <v-main class="grey lighten-4" >
         <OveraSemestra/>
         <router-view></router-view>
       </v-main>
@@ -46,10 +46,18 @@ export default {
     isAuthenticated() {
       return this.$store.getters.loggedIn;
     },
+  },
+  updated() {
+    if(this.$store.getters.loggedIn==false){
+      this.$router.push("/")
+    }
+  },
+  mounted() {
+
   }
 }
 </script>
-<style>
+<style scoped>
 .v-dialog__container {
   display: unset;
 }

@@ -5,10 +5,10 @@
         <v-col>
           <span class="display-2">{{ studijskiProgram.predmet.naziv }}</span>
         </v-col>
-        <v-col  md="auto" offset="4">
+        <v-col v-show="false"  md="auto" offset="4">
           <v-btn>Izmeni</v-btn>
         </v-col>
-        <v-col md="auto">
+        <v-col v-show="false" md="auto">
           <v-btn>Obrisi</v-btn>
         </v-col>
       </v-row>
@@ -60,7 +60,7 @@
                 <v-dialog v-model="dialog" max-width="500px">
                   <template v-slot:activator="{ on, attrs }">
                     <v-btn
-                        color="primary"
+                        color="#485E88"
                         dark
                         class="mb-2"
                         v-bind="attrs"
@@ -71,86 +71,89 @@
                     <v-card-title>
                       <span class="headline">Ispit</span>
                     </v-card-title>
-
-                    <v-card-text>
-                      <v-container>
-                        <v-row>
-                          <v-col >
-                            <v-select
-                                filled
-                                v-model="editedItem.rok"
-                                :items="rokovi"
-                                item-text="naziv"
-                                label="Rok"
-                                v-if="edit != true"
-                            ></v-select>
-                          </v-col>
-                        </v-row>
-                        <v-row>
-                          <v-col >
+                    <v-form ref="form">
+                      <v-card-text>
+                        <v-container>
+                          <v-row>
+                            <v-col >
+                              <v-select
+                                  :rules="rokRules"
+                                  filled
+                                  v-model="editedItem.rok"
+                                  :items="rokovi"
+                                  item-text="naziv"
+                                  label="Rok"
+                                  v-if="edit != true"
+                              ></v-select>
+                            </v-col>
+                          </v-row>
+                          <v-row>
+                            <v-col >
+                              <v-menu
+                                  v-model="menu"
+                                  :close-on-content-click="false"
+                                  :nudge-right="40"
+                                  transition="scale-transition"
+                                  offset-y
+                                  min-width="290px"
+                              >
+                                <template v-slot:activator="{ on, attrs }">
+                                  <v-text-field
+                                      :rules="datumRules"
+                                      v-model="computedDateFormatted"
+                                      label="Datum"
+                                      filled
+                                      readonly
+                                      v-bind="attrs"
+                                      v-on="on"
+                                  ></v-text-field>
+                                </template>
+                                <v-date-picker v-model="editedItem.datum" @input="menu = false"></v-date-picker>
+                              </v-menu>
+                            </v-col>
+                          </v-row>
+                          <v-row>
+                            <v-col>
                             <v-menu
-                                v-model="menu"
+                                ref="menu2"
+                                v-model="menu2"
                                 :close-on-content-click="false"
                                 :nudge-right="40"
+                                :return-value.sync="editedItem.vremeOdrzavanja"
                                 transition="scale-transition"
                                 offset-y
+                                max-width="290px"
                                 min-width="290px"
                             >
                               <template v-slot:activator="{ on, attrs }">
                                 <v-text-field
-                                    v-model="computedDateFormatted"
-                                    label="Datum"
+                                    v-model="editedItem.vremeOdrzavanja"
+                                    label="Vreme odrzavanja"
                                     filled
                                     readonly
                                     v-bind="attrs"
                                     v-on="on"
                                 ></v-text-field>
                               </template>
-                              <v-date-picker v-model="editedItem.datum" @input="menu = false"></v-date-picker>
-                            </v-menu>
-                          </v-col>
-                        </v-row>
-                        <v-row>
-                          <v-col>
-                          <v-menu
-                              ref="menu2"
-                              v-model="menu2"
-                              :close-on-content-click="false"
-                              :nudge-right="40"
-                              :return-value.sync="editedItem.vremeOdrzavanja"
-                              transition="scale-transition"
-                              offset-y
-                              max-width="290px"
-                              min-width="290px"
-                          >
-                            <template v-slot:activator="{ on, attrs }">
-                              <v-text-field
+                              <v-time-picker
+                                  format='24hr'
+                                  v-if="menu2"
                                   v-model="editedItem.vremeOdrzavanja"
-                                  label="Vreme odrzavanja"
-                                  filled
-                                  readonly
-                                  v-bind="attrs"
-                                  v-on="on"
-                              ></v-text-field>
-                            </template>
-                            <v-time-picker
-                                format="24h"
-                                v-if="menu2"
-                                v-model="editedItem.vremeOdrzavanja"
-                                full-width
-                                @click:minute="$refs.menu2.save(editedItem.vremeOdrzavanja)"
-                            ></v-time-picker>
-                          </v-menu>
-                          </v-col>
-                        </v-row>
-                        <v-row>
-                          <v-col >
-                            <v-text-field filled v-model="editedItem.mestoOdrzavanja" label="Mesto odrzavanja"></v-text-field>
-                          </v-col>
-                        </v-row>
-                      </v-container>
-                    </v-card-text>
+                                  full-width
+                                  @click:minute="$refs.menu2.save(editedItem.vremeOdrzavanja)"
+                              ></v-time-picker>
+                            </v-menu>
+                            </v-col>
+                          </v-row>
+                          <v-row>
+                            <v-col >
+                              <v-text-field filled v-model="editedItem.mestoOdrzavanja" label="Mesto odrzavanja"></v-text-field>
+                            </v-col>
+                          </v-row>
+                        </v-container>
 
+                      </v-card-text>
+                    </v-form>
                     <v-card-actions>
                       <v-spacer></v-spacer>
                       <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
@@ -219,7 +222,14 @@ export default {
   },
   data(){
     return{
-      studijskiProgram:null,
+      studijskiProgram:{
+        predmet:{
+          naziv:""
+        },
+        smer:{
+          naziv:""
+        }
+      },
       id:this.$route.params.id,
       ispiti:[],
       menu:false,
@@ -260,7 +270,13 @@ export default {
       dateFormatted: this.formatDateInput(new Date().toISOString().substr(0, 10)),
       edit:false,
       message:"",
-      color:"primary"
+      color:"primary",
+      rokRules:[
+        v=> !!v || 'Rok mora biti izabran',
+      ],
+      datumRules:[
+        v=> !!v || 'Datum mora biti izabran',
+      ],
       }
     },
 
@@ -355,9 +371,14 @@ export default {
         this.editedItem = Object.assign({}, this.defaultItem)
         this.editedIndex = -1
       })
+      this.$refs.form.resetValidation();
+
     },
 
     save () {
+      if(this.$refs.form.validate() == false){
+        return;
+      }
       if (this.editedIndex > -1) {
         var index = this.editedIndex;
 

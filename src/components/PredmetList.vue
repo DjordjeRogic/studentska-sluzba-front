@@ -3,7 +3,7 @@
     <v-data-table
         :headers="headers"
         :items="predmeti"
-        class="elevation-1"
+        class="elevation-1 ma-3"
         :footer-props="{
         itemsPerPageOptions: [15]
        }"
@@ -26,30 +26,31 @@
               <v-card-title>
                 <span class="headline">{{ formTitle }}</span>
               </v-card-title>
-
-              <v-card-text>
-                <v-container>
-                  <v-row>
-                    <v-col >
-                      <v-text-field filled v-model="editedItem.naziv" label="Naziv"></v-text-field>
-                    </v-col>
-                  </v-row>
-                  <v-row>
-                    <v-col>
-                      <v-select
-                          filled
-                          v-model="editedItem.kategorija"
-                          :items="kategorije"
-                          item-text="kategorija"
-                          item-value="value"
-                          label="Kategorija"
-                          return-object
-                      ></v-select>
-                    </v-col>
-                  </v-row>
-                </v-container>
-              </v-card-text>
-
+              <v-form ref="form">
+                <v-card-text>
+                  <v-container>
+                    <v-row>
+                      <v-col >
+                        <v-text-field :rules="nazivRules" filled v-model="editedItem.naziv" label="Naziv"></v-text-field>
+                      </v-col>
+                    </v-row>
+                    <v-row>
+                      <v-col>
+                        <v-select
+                            :rules="kategorijaRules"
+                            filled
+                            v-model="editedItem.kategorija"
+                            :items="kategorije"
+                            item-text="kategorija"
+                            item-value="value"
+                            label="Kategorija"
+                            return-object
+                        ></v-select>
+                      </v-col>
+                    </v-row>
+                  </v-container>
+                </v-card-text>
+              </v-form>
               <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
@@ -74,9 +75,7 @@
           mdi-delete
         </v-icon>
       </template>
-      <template v-slot:no-data>
-        <v-btn color="primary" @click="initialize">Reset</v-btn>
-      </template>
+
     </v-data-table>
 
     <v-snackbar
@@ -137,7 +136,16 @@ export default {
       {kategorija: 'Nucno-strucni', value:'NS'},
       {kategorija: 'Strucno-aplikativni', value:'SA'},
     ],
-    selectedKategorija:{kategorija: 'Akademsko-opsteobrazovani', value:'AO'}
+    selectedKategorija:{kategorija: 'Akademsko-opsteobrazovani', value:'AO'},
+    nazivRules:[
+      v=> !!v || 'Ime mora biti uneseno',
+      v=> /^[A-Z]{1}/.test(v) || 'Naziv mora poceti velikim slovom.',
+      v=> /^[A-Z]{1}[a-zA-Z0-9]*$/.test(v) || 'Naziv ne moze da sadrzi specijalne karaktere.',
+
+    ],
+    kategorijaRules:[
+      v=> !!v || 'Kategorija mora biti izabrana',
+    ],
   }),
 
   computed: {
@@ -205,9 +213,14 @@ export default {
         this.editedItem = Object.assign({}, this.defaultItem)
         this.editedIndex = -1
       })
+      this.$refs.form.resetValidation();
+
     },
 
     save () {
+      if(this.$refs.form.validate() == false){
+        return;
+      }
       if (this.editedIndex > -1) {
         var index = this.editedIndex;
 

@@ -41,7 +41,7 @@
               <span style="font-size: 2em">Sifra:</span>
             </v-col>
             <v-col  align="left">
-              <v-btn x-large @click="izmenaSifre = true"> Izmeni sifru</v-btn>
+              <v-btn color="#485E88" dark x-large @click="izmenaSifre = true"> Izmeni sifru</v-btn>
             </v-col>
 
             <v-col  v-if="this.$store.getters.userRole=='ROLE_ADMIN'" align="center" >
@@ -73,27 +73,27 @@
         <v-card-title>
           <span class="headline">Izmena sifre</span>
         </v-card-title>
-
-        <v-card-text>
-          <v-container>
-            <v-row>
-              <v-col >
-                <v-text-field type="password" filled v-model="trenutnaSifra" label="Trenunta sifra"></v-text-field>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col>
-                <v-text-field type="password" filled v-model="novaSifra" label="Nova sifra"></v-text-field>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col>
-                <v-text-field type="password" filled v-model="potvrda" label="Potvrdi sifru"></v-text-field>
-              </v-col>
-            </v-row>
-          </v-container>
-        </v-card-text>
-
+        <v-form ref="form">
+          <v-card-text>
+            <v-container>
+              <v-row>
+                <v-col >
+                  <v-text-field :rules="trenutnaSifraRules" type="password" filled v-model="trenutnaSifra" label="Trenunta sifra"></v-text-field>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col>
+                  <v-text-field :rules="sifraRules" type="password" filled v-model="novaSifra" label="Nova sifra"></v-text-field>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col>
+                  <v-text-field :rules="ponovnaSifraRules" type="password" filled v-model="potvrda" label="Potvrdi sifru"></v-text-field>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-card-text>
+        </v-form>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" text @click="closeDialog">Cancel</v-btn>
@@ -161,12 +161,28 @@ export default {
       snackbar:false,
       color:'success',
       message:'',
-      dialog:false
+      dialog:false,
+      trenutnaSifraRules:[
+        v=> !!v || 'Trenutna sifra mora biti uneta',
+      ],
+      sifraRules:[
+        v=> !!v || 'Nova sifra mora biti uneta',
+        v=> /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])/.test(v) || 'Sifra mora da sadrzi barem jedno veliko slovo i broj.',
+       v=>v.length > 8 || 'Sifra mora imati najmanje 8 karaktera'
+
+      ],
+      ponovnaSifraRules:[
+        v=> !!v || 'Potvrda mora biti uneta',
+        v=> v==this.trenutnaSifra || 'Sifra i potvrda se ne poklapaju.',
+      ],
 
     }
   },
   methods:{
     promeniSifru(){
+      if(this.$refs.form.validate() == false){
+        return;
+      }
       axios.put(baseUrl+"/user/"+this.user.id+"/sifra",{
         potvrda:this.potvrda,
         trenutnaSifra:this.trenutnaSifra,
@@ -195,6 +211,8 @@ export default {
       this.trenutnaSifra=""
       this.novaSifra=""
       this.izmenaSifre = false
+      this.$refs.form.resetValidation();
+
     }
   },
   mounted(){
