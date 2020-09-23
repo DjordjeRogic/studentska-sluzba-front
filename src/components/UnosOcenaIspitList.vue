@@ -4,7 +4,7 @@
         v-model="selected"
         :headers="headers"
         :items="ispiti"
-        class="elevation-1"
+        class="elevation-1 ma-3"
         group-by="rok"
         :footer-props="{
           itemsPerPageOptions: [13]
@@ -115,7 +115,10 @@
         {{item.datum}}
       </template>
       <template v-slot:item.actions="{ item }">
-        <v-btn @click="rezultati(item)">Unesi rezultate</v-btn>
+        <v-btn
+            color="#485E88"
+            dark
+            @click="rezultati(item)">Unesi rezultate</v-btn>
       </template>
 
     </v-data-table>

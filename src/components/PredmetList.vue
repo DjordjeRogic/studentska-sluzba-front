@@ -2,11 +2,12 @@
   <div>
     <v-data-table
         :headers="headers"
-        :items="predmeti"
+        :items="filterPredmeti"
         class="elevation-1 ma-3"
         :footer-props="{
-        itemsPerPageOptions: [15]
+        itemsPerPageOptions: [13]
        }"
+
     >
       <template v-slot:top>
         <v-toolbar flat color="white">
@@ -59,6 +60,9 @@
             </v-card>
           </v-dialog>
         </v-toolbar>
+        <v-row>
+          <v-col><v-text-field v-model="nazivFilter" label="Naziv" class="mx-4"></v-text-field></v-col>
+        </v-row>
       </template>
       <template v-slot:item.actions="{ item }">
         <v-icon
@@ -112,6 +116,7 @@ export default {
   },
   data: () => ({
     dialog: false,
+    nazivFilter:'',
     headers: [
       { text: 'Naziv', value: 'naziv' },
       { text: 'Kategorija', value: 'kategorija' },
@@ -140,7 +145,7 @@ export default {
     nazivRules:[
       v=> !!v || 'Ime mora biti uneseno',
       v=> /^[A-Z]{1}/.test(v) || 'Naziv mora poceti velikim slovom.',
-      v=> /^[A-Z]{1}[a-zA-Z0-9]*$/.test(v) || 'Naziv ne moze da sadrzi specijalne karaktere.',
+      v=> /^[A-Z]{1}[a-zA-Z0-9 ]*$/.test(v) || 'Naziv ne moze da sadrzi specijalne karaktere.',
 
     ],
     kategorijaRules:[
@@ -152,6 +157,11 @@ export default {
     formTitle () {
       return 'Predmet'
     },
+    filterPredmeti: function(){
+      return this.predmeti.filter((predmet)=>{
+        return (predmet.naziv.toUpperCase().match(this.nazivFilter.toUpperCase()))
+      });
+    }
   },
 
   watch: {

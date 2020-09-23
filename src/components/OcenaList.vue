@@ -3,7 +3,7 @@
     <v-data-table
         :headers="headers"
         :items="ocene"
-        class="elevation-1"
+        class="elevation-1 ma-3"
         group-by="semestar"
         :footer-props="{
           itemsPerPageOptions: [13]

@@ -166,7 +166,7 @@ export default {
     nazivRules:[
       v=> !!v || 'Naziv mora biti uneseno',
       v=> /^[A-Z]{1}/.test(v) || 'Naziv mora poceti velikim slovom.',
-      v=> /^[A-Z]{1}[a-zA-Z0-9 ]*$/.test(v) || 'Naziv ne moze da sadrzi specijalne karaktere.',
+      v=> /^[A-Z]{1}[a-zA-Z0-9 ,]*$/.test(v) || 'Naziv ne moze da sadrzi specijalne karaktere.',
     ],
     skracenicaRules:[
       v=> !!v || 'Skracenica mora biti unesena',

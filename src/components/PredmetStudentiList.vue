@@ -82,6 +82,7 @@
               :footer-props="{
               itemsPerPageOptions: [15]
              }"
+              sort-by="brojIndexa"
           >
 
             <template v-slot:no-data>
@@ -276,7 +277,7 @@ export default {
       });
     },
     filename(){
-      return this.studijskiProgram.naziv +"_"+this.studijskiProgram.predmet.naziv+"_dolasci";
+      return this.studijskiProgram.smer.naziv +"_"+this.studijskiProgram.predmet.naziv+"_dolasci";
     },
     uploadFile(){
       this.uploading = true

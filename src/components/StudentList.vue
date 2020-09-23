@@ -1,12 +1,18 @@
 <template>
   <div>
     <v-data-table
+        ref="tabela"
         :headers="headers"
-        :items="filterStudent"
+        :items="studenti"
         class="elevation-1 ma-3"
         :footer-props="{
         itemsPerPageOptions: [15]
        }"
+        @update:options="updatePagination"
+        :server-items-length=studentSize
+        :page.sync = page
+
+
     >
       <template v-slot:item.smer="{ item }">
         {{item.smer.naziv}}
@@ -72,10 +78,10 @@
           </v-dialog>
         </v-toolbar>
         <v-row>
-          <v-col><v-text-field v-model="imeFilter" label="Ime" class="mx-4"></v-text-field></v-col>
-          <v-col><v-text-field v-model="prezimeFilter" label="Prezime" class="mx-4"></v-text-field></v-col>
-          <v-col><v-text-field v-model="emailFilter" label="Email" class="mx-4"></v-text-field></v-col>
-          <v-col><v-text-field v-model="indexFilter" label="Broj indexa" class="mx-4"></v-text-field></v-col>
+          <v-col><v-text-field @input="waitForInput()" v-model="imeFilter" label="Ime" class="mx-4"></v-text-field></v-col>
+          <v-col><v-text-field @input="waitForInput()" v-model="prezimeFilter" label="Prezime" class="mx-4"></v-text-field></v-col>
+          <v-col><v-text-field @input="waitForInput()" v-model="emailFilter" label="Email" class="mx-4"></v-text-field></v-col>
+          <v-col><v-text-field @input="waitForInput()" v-model="indexFilter" label="Broj indexa" class="mx-4"></v-text-field></v-col>
 
         </v-row>
       </template>
@@ -135,6 +141,8 @@ export default {
     prezimeFilter:'',
     emailFilter:'',
     indexFilter:'',
+    studentSize:0,
+    page:1,
     headers: [
       { text: 'Ime', value: 'name' },
       { text: 'Prezime', value: 'surname' },
@@ -161,6 +169,7 @@ export default {
     message:'',
     color:'success',
     smerovi:[],
+    debounce:null,
     imeRules:[
       v=> !!v || 'Ime mora biti uneseno',
       v=> /^[A-Z]{1}[a-z]*$/.test(v) || 'Ime mora poceti velikim slovom i ne moze imati specijalne karaktere, velika slova ili brojeve.',
@@ -197,6 +206,78 @@ export default {
     },
   },
   methods: {
+    waitForInput(){
+      clearTimeout(this.debounce)
+      this.debounce=setTimeout(()=>{
+        console.log("search:"+ this.imeFilter+ ","+this.prezimeFilter+ ","+this.emailFilter+","+this.indexFilter)
+      //ovde slati search
+        this.search();
+      },600)
+
+    },
+    search(){
+      this.page =1;
+      var ime = "null";
+      var prezime ="null";
+      var email = "null";
+      var index = "null";
+      console.log(prezime)
+      if(this.imeFilter != null && this.imeFilter != ''){
+        ime = this.imeFilter
+      }
+      if(this.prezimeFilter != null && this.prezimeFilter != ''){
+        console.log(this.prezimeFilter)
+        prezime = this.prezimeFilter
+      }
+      if(this.emailFilter != null && this.emailFilter != ''){
+        email = this.emailFilter
+      }
+      if(this.indexFilter != null && this.indexFilter != ''){
+        index = this.indexFilter
+      }
+      console.log(prezime)
+      axios.get("http://localhost:8080/student/"+ime+"/"+prezime+"/"+email+"/"+index+"/page/0/size/15").then((response) => {
+        this.studenti = response.data;
+      })
+
+      axios.get("http://localhost:8080/student/"+ime+"/"+prezime+"/"+email+"/"+index+"/size").then((response) => {
+        this.studentSize = response.data;
+      })
+    },
+    updatePagination(options){
+      //ovde slati zahtev po pageu
+      console.log(options)
+      var page = options.page-1
+
+      if(this.imeFilter != '' || this.prezimeFilter != '' || this.emailFilter != '' || this.indexFilter != ''){
+        var ime = "null";
+        var prezime ="null";
+        var email = "null";
+        var index = "null";
+
+        if(this.imeFilter != null && this.imeFilter != ''){
+          ime = this.imeFilter
+        }
+        if(this.prezimeFilter != null && this.prezimeFilter != ''){
+          console.log(this.prezimeFilter)
+          prezime = this.prezimeFilter
+        }
+        if(this.emailFilter != null && this.emailFilter != ''){
+          email = this.emailFilter
+        }
+        if(this.indexFilter != null && this.indexFilter != ''){
+          index = this.indexFilter
+        }
+        axios.get("http://localhost:8080/student/"+ime+"/"+prezime+"/"+email+"/"+index+"/page/"+page+"/size/"+options.itemsPerPage).then((response) => {
+          this.studenti = response.data;
+        })
+      }else {
+
+        axios.get("http://localhost:8080/student/page/" + page + "/size/" + options.itemsPerPage).then((response) => {
+          this.studenti = response.data;
+        })
+      }
+    },
     editItem (item) {
       this.editedIndex = this.studenti.indexOf(item)
       this.editedItem = Object.assign({}, item)
@@ -257,8 +338,8 @@ export default {
     },
   },
   mounted() {
-    axios.get("http://localhost:8080/student").then((response) => {
-      this.studenti = response.data;
+    axios.get("http://localhost:8080/student/size").then((response) => {
+      this.studentSize = response.data;
     })
     axios.get("http://localhost:8080/smer").then((response) => {
       this.smerovi = response.data;

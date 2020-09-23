@@ -44,7 +44,7 @@
           group-by="semestar"
           show-group-by
           :footer-props="{
-        itemsPerPageOptions: [13]
+        itemsPerPageOptions: [9]
        }"
       >
         <template v-slot:top>
@@ -282,10 +282,11 @@ export default {
       esbpRules:[
         v=> !!v || 'Broj ESBP bodova mora biti unesen',
         v=> v>0 || 'Broj ESBP bodova ne moze biti manji od 1',
-        v=> v<61 || 'Broj ESBP bodova ne moze biti veci od 60',
+        v=> v<31 || 'Broj ESBP bodova ne moze biti veci od 30',
       ],
       smestarRules:[
         v=> !!v || 'Broj semestara mora biti izabran',
+        v=> v<=this.smer.trajanjeUSemestrima ||"Semestar ne moze biti veci od trajanja smera"
       ],
     }
   },
@@ -300,11 +301,6 @@ export default {
       this.editedItem = Object.assign({}, item)
       this.dialog = true
       this.edit = true
-    },
-
-    deleteItem (item) {
-      const index = this.profesori.indexOf(item)
-      confirm('Are you sure you want to delete this item?') && this.profesori.splice(index, 1)
     },
 
     close () {
@@ -340,6 +336,7 @@ export default {
           Object.assign(this.predmeti[index], response.data)
           this.color="success"
           this.snackbar=true
+          this.close();
         }).catch(error=>{
           this.color="error"
           this.message = error.response.data;
@@ -356,7 +353,7 @@ export default {
               'semestar':this.editedItem.semestar
             }
         ).then(response => {
-          this.message="Uspesno dodat predmet:  "+response.data.predmet.naziv;
+          this.message="Uspesno dodat studijski program:  "+response.data.predmet.naziv;
           this.predmeti.push(response.data)
           this.color="success"
           this.snackbar=true
@@ -368,7 +365,7 @@ export default {
         });
         }
       this.edit = false
-      this.close()
+
 
 
     },
@@ -379,7 +376,7 @@ export default {
       const index = this.predmeti.indexOf(item)
       axios.delete(baseUrl+"/studijskiProgram/"+item.id).then(() => {
         this.predmeti.splice(index,1);
-        this.message="Uspesno uklonjen predmet i ispiti.";
+        this.message="Uspesno uklonjen studijski program i ispiti.";
         this.color="success"
         this.snackbar=true
         this.close();

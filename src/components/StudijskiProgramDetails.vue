@@ -239,7 +239,7 @@ export default {
         { text: 'Datum', value: 'datum', groupable:false },
         { text: 'Vreme odrzavanja', value: 'vremeOdrzavanja', groupable:false  },
         { text: 'Mesto odrzavanja', value: 'mestoOdrzavanja', groupable:false  },
-        { text: 'Rok', value: 'rok', groupable:false  },
+        { text: 'Rok', value: 'rok', groupable:false, sortable:false },
         { text: 'Actions', value: 'actions', groupable:false  },
 
       ],
@@ -408,11 +408,16 @@ export default {
               'mestoOdrzavanja':this.editedItem.mestoOdrzavanja,
               'rok':this.editedItem.rok
             }
-        ).then(response => {
+        ).then(() => {
           this.message="Uspesno dodat ispit.";
-          this.ispiti.push(response.data)
+          axios.get("http://localhost:8080/studijskiProgram/"+this.id+"/ispit").then((response) => {
+            this.ispiti = response.data;
+
+          })
           this.color="success"
           this.snackbar=true
+          this.close()
+
         }).catch(error=>{
           this.color="error"
           this.message = error.response.data;
@@ -421,7 +426,6 @@ export default {
 
       }
       this.edit = false;
-      this.close()
     },
   },
   computed: {

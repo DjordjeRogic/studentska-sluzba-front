@@ -1,6 +1,6 @@
 <template>
-  <v-card elevation="2" style="margin: 5px">
-    <v-card-title  class="display-2" >Profil <v-spacer></v-spacer> <v-btn x-large> Izmeni profil</v-btn></v-card-title>
+  <v-card elevation="2" class="ma-3">
+    <v-card-title  class="display-2" >Profil <v-spacer></v-spacer> <v-btn v-show="false" x-large> Izmeni profil</v-btn></v-card-title>
   <v-container  style="margin-top: 2em; margin-left: 2em">
     <v-row align="center">
       <v-col md="3" xl="2">
@@ -173,7 +173,7 @@ export default {
       ],
       ponovnaSifraRules:[
         v=> !!v || 'Potvrda mora biti uneta',
-        v=> v==this.trenutnaSifra || 'Sifra i potvrda se ne poklapaju.',
+        v=> v==this.novaSifra || 'Sifra i potvrda se ne poklapaju.',
       ],
 
     }

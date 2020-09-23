@@ -2,7 +2,7 @@
     <v-data-table
         :headers="headers"
         :items="predmeti"
-        class="elevation-1"
+        class="elevation-1 ma-3"
         :footer-props="{
         itemsPerPageOptions: [15]
        }"
@@ -23,12 +23,12 @@
         {{item.predmet.kategorija}}
       </template>
       <template v-slot:item.actions="{item}">
-        <v-btn @click="studenti(item)">
+        <v-btn
+            color="#485E88"
+            dark
+            @click="studenti(item)">
           Studenti
         </v-btn>
-      </template>
-      <template v-slot:no-data>
-        <v-btn color="primary" @click="initialize">Reset</v-btn>
       </template>
     </v-data-table>
 

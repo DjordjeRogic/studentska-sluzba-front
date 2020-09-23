@@ -4,7 +4,7 @@
         v-model="selected"
         :headers="headers"
         :items="ispiti"
-        class="elevation-1"
+        class="elevation-1 ma-3"
         group-by="rok"
         :footer-props="{
           itemsPerPageOptions: [13]
