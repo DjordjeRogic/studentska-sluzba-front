@@ -167,6 +167,7 @@ export default {
     ],
     sifraRules:[
       v=> !!v || 'Sifra mora biti unesena',
+      v=> /^[A-Z0-9]*$/.test(v) || 'Sifra moze da sadrzi samo velika slova i brojeve.',
     ],
   }),
 
@@ -255,7 +256,7 @@ export default {
         axios.post(baseUrl+"/profesor",
           this.editedItem
         ).then(response => {
-          this.message="Uspesno dodat profesor. Sifra koja je generisana je:  "+response.data.sifra;
+          this.message="Uspesno dodat profesor "+response.data.name + " "+response.data.surname;
           this.profesori.push(response.data)
           this.color="success"
           this.snackbar=true

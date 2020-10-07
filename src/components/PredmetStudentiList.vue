@@ -182,7 +182,7 @@ export default {
       },
       uploading:false,
       selectedFile: null,
-      defaultButtonText:"Uploaduj rezultate",
+      defaultButtonText:"Uploaduj dolaske",
       studijskiProgram:{}
     }
   },

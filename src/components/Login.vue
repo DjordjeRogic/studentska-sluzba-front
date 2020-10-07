@@ -112,7 +112,7 @@ export default {
                     this.$store
                         .dispatch("proveraOvereSemestra");
                   }
-                  this.$router.push({ name: "HelloWorld" });
+                  this.$router.push({ name: "Profil" });
 
 
                 })

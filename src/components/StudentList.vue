@@ -6,7 +6,7 @@
         :items="studenti"
         class="elevation-1 ma-3"
         :footer-props="{
-        itemsPerPageOptions: [15]
+        itemsPerPageOptions: [14]
        }"
         @update:options="updatePagination"
         :server-items-length=studentSize
@@ -236,7 +236,7 @@ export default {
         index = this.indexFilter
       }
       console.log(prezime)
-      axios.get("http://localhost:8080/student/"+ime+"/"+prezime+"/"+email+"/"+index+"/page/0/size/15").then((response) => {
+      axios.get("http://localhost:8080/student/"+ime+"/"+prezime+"/"+email+"/"+index+"/page/0/size/14").then((response) => {
         this.studenti = response.data;
       })
 
@@ -323,8 +323,7 @@ export default {
         axios.post(baseUrl+"/student",
             this.editedItem
         ).then(response => {
-          this.message="Uspesno dodat student. Sifra koja je generisana je:  "+response.data.sifra;
-          this.studenti.push(response.data)
+          this.message="Uspesno dodat student "+response.data.name+" "+response.data.surname;
           this.color="success"
           this.snackbar=true
         }).catch(error=>{

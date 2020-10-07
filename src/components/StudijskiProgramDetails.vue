@@ -89,6 +89,26 @@
                           </v-row>
                           <v-row>
                             <v-col >
+                              <v-select
+                                  :rules="profesorRules"
+                                  filled
+                                  v-model="editedItem.profesor"
+                                  :items="profesori"
+                                  item-text="name"
+                                  label="Profesor"
+                                  return-object
+                              >
+                                <template v-slot:selection="data">
+                                  {{ data.item.name }} {{ data.item.surname }} ,{{ data.item.sifraProfesora }}
+                                </template>
+                                <template v-slot:item="data">
+                                  {{ data.item.name }} {{ data.item.surname }} ,{{ data.item.sifraProfesora }}
+                                </template>
+                              </v-select>
+                            </v-col>
+                          </v-row>
+                          <v-row>
+                            <v-col >
                               <v-menu
                                   v-model="menu"
                                   :close-on-content-click="false"
@@ -167,6 +187,9 @@
             <template v-slot:item.datum="{ item }">
               {{item.datum}}
             </template>
+            <template v-slot:item.profesor="{ item }">
+              {{item.profesor.name}} {{item.profesor.surname}}
+            </template>
             <template v-slot:item.actions="{ item }">
               <v-icon
                   small
@@ -240,6 +263,7 @@ export default {
         { text: 'Vreme odrzavanja', value: 'vremeOdrzavanja', groupable:false  },
         { text: 'Mesto odrzavanja', value: 'mestoOdrzavanja', groupable:false  },
         { text: 'Rok', value: 'rok', groupable:false, sortable:false },
+        { text: 'Profesor', value: 'profesor', groupable:false, sortable:false },
         { text: 'Actions', value: 'actions', groupable:false  },
 
       ],
@@ -248,12 +272,14 @@ export default {
         mestoOdrzavanja: '',
         vremeOdrzavanja: '',
         rok:null,
+        profesor:null
       },
       defaultItem: {
         datum: null,
         mestoOdrzavanja: '',
         vremeOdrzavanja: '',
         rok:null,
+        profesor:null
       },
       dialog: false,
       rokovi:[
@@ -271,11 +297,15 @@ export default {
       edit:false,
       message:"",
       color:"primary",
+      profesori:[],
       rokRules:[
         v=> !!v || 'Rok mora biti izabran',
       ],
       datumRules:[
         v=> !!v || 'Datum mora biti izabran',
+      ],
+      profesorRules:[
+        v=> !!v || 'Profesor mora biti izabran',
       ],
       }
     },
@@ -388,6 +418,7 @@ export default {
               'programId':this.studijskiProgram.id,
               'vremeOdrzavanja':this.editedItem.vremeOdrzavanja,
               'mestoOdrzavanja':this.editedItem.mestoOdrzavanja,
+              'profesor':this.editedItem.profesor,
               'rok':this.editedItem.rok.value
             }
         ).then(response => {
@@ -406,6 +437,7 @@ export default {
               'datum':this.editedItem.datum,
               'vremeOdrzavanja':this.editedItem.vremeOdrzavanja,
               'mestoOdrzavanja':this.editedItem.mestoOdrzavanja,
+              'profesor':this.editedItem.profesor,
               'rok':this.editedItem.rok
             }
         ).then(() => {
@@ -435,6 +467,9 @@ export default {
   },
   mounted() {
 
+    axios.get("http://localhost:8080/studijskiProgram/"+this.id+"/profesori").then((response) => {
+      this.profesori = response.data;
+    })
     axios.get("http://localhost:8080/studijskiProgram/"+this.id).then((response) => {
       this.studijskiProgram = response.data;
     })

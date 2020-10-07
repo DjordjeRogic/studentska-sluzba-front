@@ -85,9 +85,10 @@
                       <v-row>
                         <v-col >
                           <v-select
+                              multiple
                               :rules="profesorRules"
                               filled
-                              v-model="editedItem.profesor"
+                              v-model="editedItem.profesori"
                               :items="profesori"
                               item-text="name"
                               label="Profesor"
@@ -157,13 +158,14 @@
           {{item.semestar}}
         </template>
         <template v-slot:item.profesor="{ item }">
-          {{item.profesor.name}} {{item.profesor.surname}}
+          {{getProfesors(item)}}
         </template>
         <template v-slot:item.detalji="{ item }">
           <v-btn color="#485E88" dark @click="detalji(item)">Detalji</v-btn>
         </template>
         <template v-slot:item.actions="{ item }">
           <v-icon
+              v-show="false"
               small
               class="mr-2"
               @click="removePredmet(item)"
@@ -231,7 +233,7 @@ export default {
         brojESBPBodova: '',
         semestar:null,
         predmet:null,
-        profesor:null,
+        profesori:[],
       },
       defaultItem: {
         sifraStudijskogPrograma: '',
@@ -239,7 +241,7 @@ export default {
         brojESBPBodova: '',
         selectedSemestar:null,
         noviPredmet:null,
-        profesor:null,
+        profesori:[],
       },
       dialog: false,
       noviPredmeti:[],
@@ -325,7 +327,7 @@ export default {
               'id':this.editedItem.id,
               'smer':this.smer,
               'predmet':this.editedItem.predmet,
-              'profesor':this.editedItem.profesor,
+              'profesori':this.editedItem.profesori,
               'brojPredavanjaUGodini':this.editedItem.brojPredavanjaUGodini,
               'brojESBPBodova':this.editedItem.brojESBPBodova,
               'sifraStudijskogPrograma':this.editedItem.sifraStudijskogPrograma,
@@ -337,6 +339,7 @@ export default {
           this.color="success"
           this.snackbar=true
           this.close();
+          this.edit = false
         }).catch(error=>{
           this.color="error"
           this.message = error.response.data;
@@ -346,7 +349,7 @@ export default {
         axios.post(baseUrl+"/studijskiProgram",{
               'smer':this.smer,
               'predmet':this.editedItem.predmet,
-              'profesor':this.editedItem.profesor,
+              'profesori':this.editedItem.profesori,
               'brojPredavanjaUGodini':this.editedItem.brojPredavanjaUGodini,
               'brojESBPBodova':this.editedItem.brojESBPBodova,
               'sifraStudijskogPrograma':this.editedItem.sifraStudijskogPrograma,
@@ -364,7 +367,7 @@ export default {
           this.snackbar=true
         });
         }
-      this.edit = false
+
 
 
 
@@ -385,6 +388,14 @@ export default {
         this.message = error.response.data;
         this.snackbar=true
       });
+    },
+    getProfesors(item){
+      var ret="";
+      for(var i=0;i<item.profesori.length;i++){
+        ret+= item.profesori[i].name + " "+ item.profesori[i].surname+", ";
+      }
+      ret= ret.slice(0,ret.length-2)
+      return ret;
     }
 
   },

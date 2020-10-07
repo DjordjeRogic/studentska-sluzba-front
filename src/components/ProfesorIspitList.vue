@@ -14,97 +14,6 @@
         <v-toolbar flat color="white">
           <v-toolbar-title class="display-1">Ispiti</v-toolbar-title>
           <v-spacer></v-spacer>
-          <v-dialog v-model="dialog" max-width="500px">
-            <v-card>
-              <v-card-title>
-                <span class="headline">Ispit</span>
-              </v-card-title>
-
-              <v-card-text>
-                <v-container>
-                  <v-row>
-                    <v-col >
-                      <v-text-field
-                          filled
-                          v-model="editedItem.nazivPredmeta"
-                          label="Predmet"
-                          disabled
-                      ></v-text-field>
-                    </v-col>
-                  </v-row>
-                  <v-row>
-                    <v-col >
-                      <v-text-field
-                          filled
-                          v-model="editedItem.rok"
-                          item-text="naziv"
-                          label="Rok"
-                          disabled
-                      ></v-text-field>
-                    </v-col>
-                  </v-row>
-                  <v-row>
-                    <v-col >
-                          <v-text-field
-                              v-model="computedDateFormatted"
-                              label="Datum"
-                              filled
-                              readonly
-                              v-bind="attrs"
-                              disabled
-                          ></v-text-field>
-
-                    </v-col>
-                  </v-row>
-                  <v-row>
-                    <v-col>
-                      <v-menu
-                          ref="menu2"
-                          v-model="menu2"
-                          :close-on-content-click="false"
-                          :nudge-right="40"
-                          :return-value.sync="editedItem.vremeOdrzavanja"
-                          transition="scale-transition"
-                          offset-y
-                          max-width="290px"
-                          min-width="290px"
-                      >
-                        <template v-slot:activator="{ on, attrs }">
-                          <v-text-field
-                              v-model="editedItem.vremeOdrzavanja"
-                              label="Vreme odrzavanja"
-                              filled
-                              readonly
-                              v-bind="attrs"
-                              v-on="on"
-                          ></v-text-field>
-                        </template>
-                        <v-time-picker
-                            format=24h
-                            v-if="menu2"
-                            v-model="editedItem.vremeOdrzavanja"
-                            full-width
-                            @click:minute="$refs.menu2.save(editedItem.vremeOdrzavanja)"
-                        ></v-time-picker>
-                      </v-menu>
-                    </v-col>
-                  </v-row>
-                  <v-row>
-                    <v-col >
-                      <v-text-field filled v-model="editedItem.mestoOdrzavanja" label="Mesto odrzavanja"></v-text-field>
-                    </v-col>
-                  </v-row>
-                </v-container>
-              </v-card-text>
-
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
-                <v-btn color="blue darken-1" text @click="save()">Save</v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
-
         </v-toolbar>
       </template>
 
@@ -164,8 +73,6 @@ export default {
         { text: 'Vreme odrzavanja', value: 'vremeOdrzavanja', groupable:false  },
         { text: 'Mesto odrzavanja', value: 'mestoOdrzavanja', groupable:false  },
         { text: 'Rok', value: 'rok', groupable:true  },
-        { text: 'Actions', value: 'actions', groupable:true  },
-
       ],
       rokovi:[
         {naziv: 'Januarski', value:'JAN'},
